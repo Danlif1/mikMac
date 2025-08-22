@@ -1,0 +1,7 @@
+#ifndef _KERN_MY_
+#def _KERN_MY_
+
+#include <sys/systm.h>
+#include <mach/mach_types.h>
+
+#endif // _KERN_MY_
