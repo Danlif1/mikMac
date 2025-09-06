@@ -4,6 +4,10 @@
 //
 //  Created by Daniel Lifshitz on 05/09/2025.
 //
+#pragma once
+
+#include "Logger.h"
+
 
 #define GENERIC_CHECK(action, errorValue) \
 { \
