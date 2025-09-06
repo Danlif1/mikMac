@@ -13,23 +13,20 @@
     Get the vnode path from a vnode pointer.
     TODO: Make a wrapper to vnode in dstd
  */
-dstd::Result<dstd::UniquePtr<char>> getVnodePath(vnode_t vnode) {
-    GENERIC_CHECK(nullptr != vnode, KERN_INVALID_ADDRESS);
+dstd::Result<dstd::String> getVnodePath(vnode_t vnode) {
+    GENERIC_CHECK(nullptr != vnode, KERN_INVALID_ADDRESS, "Invalid vnode");
     
-    CHECK_RESULT(longName, dstd::UniquePtr<char>::makeArray<char>(MAXPATHLEN, '\0'));
+    CHECK_RESULT(longName, dstd::String::make(MAXPATHLEN), "Failed to create longName");
     
     int length = MAXPATHLEN;
-    auto result = vn_getpath(vnode, longName.getValue(), &length);
+    auto result = vn_getpath(vnode, longName.c_str(), &length);
     // `vn_getpath` is deprecated, it will always return an error (5) we ignore it as it still does its work.
-    GENERIC_CHECK(0 != length, KERN_FAILURE);
+    GENERIC_CHECK(0 != length, KERN_FAILURE, "Failed to get vnode path");
     
     // Copy the long buffer to a smaller one to save space.
-    CHECK_RESULT(shortName, dstd::UniquePtr<char>::makeArray<char>(length, '\0'));
-    for (size_t i = 0; i < shortName.getSize(); i++) {
-        shortName.getValue()[i] = longName.getValue()[i];
-    }
-    
-    return dstd::Result<dstd::UniquePtr<char>>::make(dstd::move(shortName));
+    CHECK_RESULT(shortName, dstd::String::make(longName.c_str()), "Failed to create short name");
+
+    return dstd::Result<dstd::String>::make(dstd::move(shortName));
 }
 
 int callback(
@@ -62,18 +59,15 @@ int callback(
     auto path = dstd::move(pathResult.value());
     
     // Check if the path is too short so we won't go out of bounds.
-    if (4 > path.getSize()) {
+    if (4 > path.size()) {
         // Too short to be our unwanted files.
         return KAUTH_RESULT_DEFER;
     }
     
-    // Get the raw string.
-    const char* pathString = path.getValue();
-    ;
     // Check if it ends with evil.
     // path.getSize() is out of bounds, path.getSize() - 1 is \0.
-    if (nullptr != dstd::strstr(pathString, data->c_str())) {
-        LOG(3, "Tried executing: %s", pathString);
+    if (nullptr != dstd::strstr(path.c_str(), data->c_str())) {
+        LOG(3, "Tried executing: %s", path.c_str());
         // Deny it.
         return KAUTH_RESULT_DENY;
     }
@@ -82,6 +76,6 @@ int callback(
 }
 
 dstd::Result<dstd::KauthCallback<dstd::String>> registerExecutionPreventorExample(dstd::String&& subString) {
-    CHECK_RESULT(executionCallback, dstd::KauthCallback<dstd::String>::make(KAUTH_SCOPE_VNODE, callback, dstd::move(subString)));
+    CHECK_RESULT(executionCallback, dstd::KauthCallback<dstd::String>::make(KAUTH_SCOPE_VNODE, callback, dstd::move(subString)), "Failed to create callback");
     return dstd::Result<dstd::KauthCallback<dstd::String>>::make(dstd::move(executionCallback));
 }

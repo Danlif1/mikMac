@@ -17,12 +17,21 @@ Result<String> String::make(const char* rawString) {
 }
 
 Result<String> String::make(const char* rawString, size_t size) {
-    GENERIC_CHECK(size < size + 1, KERN_NO_SPACE);
-    CHECK_RESULT(sharedString, SharedPtr<char>::makeArray(size + 1));
+    GENERIC_CHECK(size < size + 1, KERN_NO_SPACE, "Size too big");
+    CHECK_RESULT(sharedString, SharedPtr<char>::makeArray(size + 1), "Failed to create sharedPtr");
     
     strncpy(sharedString.getValue(), rawString, sharedString.getSize());
     // Ensure null termination
     sharedString.getValue()[sharedString.getSize() - 1] = '\0';
+    
+    return Result<String>::make(move(String(move(sharedString))));
+}
+
+Result<String> String::make(size_t size) {
+    GENERIC_CHECK(size < size + 1, KERN_NO_SPACE, "Size too big");
+    CHECK_RESULT(sharedString, SharedPtr<char>::makeArray(size + 1), "Failed to create sharedPtr");
+    
+    memset(sharedString.getValue(), '\0', sharedString.getSize());
     
     return Result<String>::make(move(String(move(sharedString))));
 }
@@ -38,10 +47,10 @@ bool String::operator==(const char* rawOther) const{
 Result<String> String::operator+(const String& other) const {
     // Check that we don't overflow.
     size_t totalSize = size() + other.size();
-    GENERIC_CHECK(totalSize > other.size(), KERN_NO_SPACE);
-    GENERIC_CHECK(totalSize > size(), KERN_NO_SPACE);
+    GENERIC_CHECK(totalSize > other.size(), KERN_NO_SPACE, "Total size too large");
+    GENERIC_CHECK(totalSize > size(), KERN_NO_SPACE, "Total size too large");
     
-    CHECK_RESULT(sharedString, SharedPtr<char>::makeArray(totalSize));
+    CHECK_RESULT(sharedString, SharedPtr<char>::makeArray(totalSize), "Failed to create large string");
     // copies size() bytes, currently hold the entire data including null terminator.
     strncpy(sharedString.getValue(), c_str(), size());
     // copies other.size() more bytes but overrides the null terminator, total size() + other.size() - 1 was written.

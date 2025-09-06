@@ -27,13 +27,13 @@ class KauthCallback
 {
 public:
     static Result<KauthCallback<T>> make(const char* identifier, kauth_scope_callback_t callback, T&& data) {
-        GENERIC_CHECK(nullptr != identifier, KERN_INVALID_ADDRESS);
+        GENERIC_CHECK(nullptr != identifier, KERN_INVALID_ADDRESS, "Invalid identifier");
         
-        CHECK_RESULT(context, UniquePtr<T>::make(data));
+        CHECK_RESULT(context, UniquePtr<T>::make(data), "Failed to create context");
         KauthCallback<T> result(move(context));
         
         auto rawListener = kauth_listen_scope(identifier, callback, result.m_data.getValue());
-        GENERIC_CHECK(nullptr != rawListener, KERN_FAILURE);
+        GENERIC_CHECK(nullptr != rawListener, KERN_FAILURE, "Failed to listen scope");
         
         auto listenerResult = UniquePtr<kauth_listener_t, KauthCallbackDeleter>::make(rawListener);
         if (listenerResult.hasError()) {
@@ -77,11 +77,11 @@ template<>
 class KauthCallback<void> {
 public:
     static Result<KauthCallback<void>> make(const char* identifier, kauth_scope_callback_t callback) {
-        GENERIC_CHECK(nullptr != identifier, KERN_INVALID_ADDRESS);
+        GENERIC_CHECK(nullptr != identifier, KERN_INVALID_ADDRESS, "Invalid identifier");
 
         KauthCallback<void> result;
         auto rawListener = kauth_listen_scope(identifier, callback, nullptr);
-        GENERIC_CHECK(nullptr != rawListener, KERN_FAILURE);
+        GENERIC_CHECK(nullptr != rawListener, KERN_FAILURE, "Failed to listen to scope");
         
         auto listenerResult = UniquePtr<kauth_listener_t, KauthCallbackDeleter>::make(rawListener);
         if (listenerResult.hasError()) {

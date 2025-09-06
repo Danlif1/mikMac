@@ -17,6 +17,7 @@ class String {
 public:
     static Result<String> make(const char* rawString);
     static Result<String> make(const char* rawString, size_t size);
+    static Result<String> make(size_t size);
     
     bool operator==(const String& other) const;
     bool operator==(const char* rawOther) const;

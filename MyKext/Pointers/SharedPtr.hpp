@@ -29,11 +29,12 @@ public:
     template<typename... Args>
     static Result<SharedPtr<T, Deleter>> makeArrayWithDeleter(Deleter deleter, const size_t size, Args... args) {
         volatile auto counter = new int64_t(1);
-        GENERIC_CHECK(nullptr != counter, KERN_NO_SPACE);
+        GENERIC_CHECK(nullptr != counter, KERN_NO_SPACE, "Failed to allocate memory for counter");
         
         void* raw = operator new[](size * sizeof(T));
         if (nullptr == raw) {
             delete counter;
+            LOG(5, "Failed to allocate memory for sharedPtr");
             return Result<void>::makeError(KERN_NO_SPACE);
         }
         

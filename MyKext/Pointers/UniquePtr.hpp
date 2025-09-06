@@ -29,7 +29,7 @@ public:
     template<typename... Args>
     static Result<UniquePtr<T, Deleter>> makeArrayWithDeleter(Deleter deleter, const size_t size, Args&&... args) {
         void* raw = operator new[](size * sizeof(T));
-        GENERIC_CHECK(nullptr != raw, KERN_NO_SPACE);
+        GENERIC_CHECK(nullptr != raw, KERN_NO_SPACE, "Failed to allocate memory");
         
         auto array = static_cast<T*>(raw);
         
