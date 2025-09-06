@@ -7,7 +7,7 @@
 #pragma once
 
 #include "../Checkers.hpp"
-#include "../Logger.h"
+#include "../Logger.hpp"
 #include "../Result.hpp"
 
 

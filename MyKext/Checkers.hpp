@@ -6,7 +6,7 @@
 //
 #pragma once
 
-#include "Logger.h"
+#include "Logger.hpp"
 
 
 #define GENERIC_CHECK(action, errorValue, errorMessage, ...) \

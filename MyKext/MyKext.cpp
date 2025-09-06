@@ -11,7 +11,7 @@
  
 #include "Context.hpp"
 
-#include "Logger.h"
+#include "Logger.hpp"
 #include "Result.hpp"
 
 #include "Pointers/UniquePtr.hpp"
