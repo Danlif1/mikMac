@@ -115,7 +115,11 @@ public:
         return m_value;
     }
     
-    size_t getSize() {
+    const T* getValue() const {
+        return m_value;
+    }
+    
+    size_t getSize() const {
         return m_size;
     }
     
