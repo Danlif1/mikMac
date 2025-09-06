@@ -24,40 +24,40 @@ public:
      */
     Optional()
         : m_dummy(0)
-        , m_isValid(false)
+        , m_hasValue(false)
     {}
     
     /**
         Copy constructors.
      */
     Optional(const Optional<T>& other) {
-        if (!other.m_isValid) {
-            m_isValid = false;
+        if (!other.m_hasValue) {
+            m_hasValue = false;
             return;
         }
         
         new (&m_object) T(other.m_object);
-        m_isValid = true;
+        m_hasValue = true;
     }
     explicit Optional(const T& object)
         : m_object(object)
-        , m_isValid(true)
+        , m_hasValue(true)
     {}
     
     /**
         Copy assignment operators.
      */
     Optional<T>& operator=(const T& object) {
-        if (m_isValid && m_object == object) {
+        if (m_hasValue && m_object == object) {
             return *this;
         }
         
-        if (m_isValid) {
+        if (m_hasValue) {
             reset();
         }
         
         new (&m_object) T(object);
-        m_isValid = true;
+        m_hasValue = true;
         
         return *this;
     }
@@ -68,12 +68,12 @@ public:
         
         reset();
         
-        if (!other.m_isValid) {
+        if (!other.m_hasValue) {
             return *this;
         }
         
         new (&m_object) T(other.m_object);
-        m_isValid = true;
+        m_hasValue = true;
         
         return *this;
     }
@@ -82,31 +82,31 @@ public:
         Move constructors.
      */
     Optional(Optional<T>&& other) {
-        if (!other.m_isValid) {
-            m_isValid = false;
+        if (!other.m_hasValue) {
+            m_hasValue = false;
             return;
         }
         
         new (&m_object) T(dstd::move(other.m_object));
-        m_isValid = true;
+        m_hasValue = true;
     }
     explicit Optional(T&& object)
         : m_object(dstd::move(object))
-        , m_isValid(true)
+        , m_hasValue(true)
     {}
     
     /**
         Move assignment operators.
      */
     Optional<T>& operator=(T&& object) {
-        if (m_isValid && m_object == object) {
+        if (m_hasValue && m_object == object) {
             return *this;
         }
         
         reset();
         
         new (&m_object) T(dstd::move(object));
-        m_isValid = true;
+        m_hasValue = true;
         
         return *this;
     }
@@ -117,12 +117,12 @@ public:
         
         reset();
         
-        if (!other.m_isValid) {
+        if (!other.m_hasValue) {
             return *this;
         }
                 
         new (&m_object) T(dstd::move(other.m_object));
-        m_isValid = true;
+        m_hasValue = true;
         
         return *this;
     }
@@ -139,19 +139,19 @@ public:
      */
     bool operator==(const Optional<T>& other) const{
         // Both are invalid.
-        if (!m_isValid && !other.m_isValid) {
+        if (!m_hasValue && !other.m_hasValue) {
             return true;
         }
         
         // One of them is valid and the other is not.
-        if (!m_isValid || !other.m_isValid) {
+        if (!m_hasValue || !other.m_hasValue) {
             return false;
         }
         
         return m_object == other.m_object;
     }
     bool operator==(const T& object) const {
-        if (!m_isValid) {
+        if (!m_hasValue) {
             return false;
         }
         
@@ -175,17 +175,17 @@ public:
     /**
         @returns If there is currently a value or not in the object.
      */
-    bool isValid() const {
-        return m_isValid;
+    bool hasValue() const {
+        return m_hasValue;
     }
     
     /**
         Calls the destructor if the object is valid.
      */
     void reset() {
-        if (m_isValid) {
+        if (m_hasValue) {
             m_object.~T();
-            m_isValid = false;
+            m_hasValue = false;
         }
     }
     
@@ -195,7 +195,7 @@ private:
         T m_object;
     };
     
-    bool m_isValid;
+    bool m_hasValue;
 };
 
 } // namespace dstd
