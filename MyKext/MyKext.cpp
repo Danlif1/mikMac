@@ -24,8 +24,8 @@ Context* g_context = nullptr;
 
 
 dstd::Result<void> startImp(kmod_info_t * kmodInfo, void * data) {
-    CHECK_RESULT(subString, dstd::String::make("evil"));
-    CHECK_RESULT(executionCallback, registerExecutionPreventorExample(dstd::move(subString)));
+    CHECK_RESULT(subString, dstd::String::make("evil"), "Failed to create sub string");
+    CHECK_RESULT(executionCallback, registerExecutionPreventorExample(dstd::move(subString)), "Failed to create callback");
     g_context = new Context(dstd::move(executionCallback));
     
     return {};
