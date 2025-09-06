@@ -24,7 +24,8 @@ Context* g_context = nullptr;
 
 
 dstd::Result<void> startImp(kmod_info_t * kmodInfo, void * data) {
-    CHECK_RESULT(executionCallback, registerExecutionPreventorExample());
+    CHECK_RESULT(subString, dstd::String::make("evil"));
+    CHECK_RESULT(executionCallback, registerExecutionPreventorExample(dstd::move(subString)));
     g_context = new Context(dstd::move(executionCallback));
     
     return {};

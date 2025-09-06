@@ -8,11 +8,13 @@
 
 #include "KauthCallbacks/KauthCallback.hpp"
 
+#include "Strings/String.hpp"
+
 
 struct Context {
-    Context(dstd::KauthCallback<void*>&& executionCallback)
+    Context(dstd::KauthCallback<dstd::String>&& executionCallback)
         : executionCallback(dstd::move(executionCallback))
     {}
     
-    dstd::KauthCallback<void*> executionCallback;
+    dstd::KauthCallback<dstd::String> executionCallback;
 };
