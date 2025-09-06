@@ -9,7 +9,6 @@
 #include <sys/kauth.h>
 
 #include "../Checkers.hpp"
-#include "../Logger.hpp"
 #include "../Result.hpp"
 
 #include "../Pointers/UniquePtr.hpp"

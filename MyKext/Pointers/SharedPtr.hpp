@@ -34,7 +34,7 @@ public:
         void* raw = operator new[](size * sizeof(T));
         if (nullptr == raw) {
             delete counter;
-            LOG(5, "Failed to allocate memory for sharedPtr");
+            LOG(LogLevel::LOG_ERROR, "Failed to allocate memory for sharedPtr");
             return Result<void>::makeError(KERN_NO_SPACE);
         }
         
