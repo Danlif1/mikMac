@@ -10,6 +10,7 @@
 
 #include "Optional.hpp"
 
+
 namespace dstd {
 
 template<typename T>
@@ -67,7 +68,7 @@ public:
     }
     
     bool hasValue() const {
-        return KERN_SUCCESS == m_error;
+        return KERN_SUCCESS == m_error && m_value.hasValue();
     }
     
     /**
