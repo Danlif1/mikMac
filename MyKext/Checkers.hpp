@@ -9,6 +9,13 @@
 #include "Logger.hpp"
 
 
+#define GENERIC_CHECK_NO_LOG(action, errorValue) \
+{ \
+    if(!(action)) { \
+        return dstd::Result<void>::makeError((errorValue)); \
+    } \
+}
+
 #define GENERIC_CHECK(action, errorValue, errorMessage, ...) \
 { \
     if(!(action)) { \
