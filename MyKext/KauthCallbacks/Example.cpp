@@ -46,6 +46,12 @@ int callback(
         return KAUTH_RESULT_DEFER;
     }
     
+    if (nullptr == voidData) {
+        LOG(4, "data is nullptr");
+        return KAUTH_RESULT_DEFER;
+    }
+    dstd::String* data = static_cast<dstd::String*>(voidData);
+    
     // Get the vnode file path.
     auto pathResult = getVnodePath(reinterpret_cast<vnode_t>(currentVnode));
     if (pathResult.hasError()) {
@@ -63,14 +69,10 @@ int callback(
     
     // Get the raw string.
     const char* pathString = path.getValue();
-    
+    ;
     // Check if it ends with evil.
     // path.getSize() is out of bounds, path.getSize() - 1 is \0.
-    if ('l' == pathString[path.getSize() - 2] &&
-        'i' == pathString[path.getSize() - 3] &&
-        'v' == pathString[path.getSize() - 4] &&
-        'e' == pathString[path.getSize() - 5]) {
-        
+    if (nullptr != dstd::strstr(pathString, data->c_str())) {
         LOG(3, "Tried executing: %s", pathString);
         // Deny it.
         return KAUTH_RESULT_DENY;
@@ -79,7 +81,7 @@ int callback(
     return KAUTH_RESULT_DEFER;
 }
 
-dstd::Result<dstd::KauthCallback<void*>> registerExecutionPreventorExample() {
-    CHECK_RESULT(executionCallback, dstd::KauthCallback<void*>::make(KAUTH_SCOPE_VNODE, callback, {}));
-    return dstd::Result<dstd::KauthCallback<void*>>::make(dstd::move(executionCallback));
+dstd::Result<dstd::KauthCallback<dstd::String>> registerExecutionPreventorExample(dstd::String&& subString) {
+    CHECK_RESULT(executionCallback, dstd::KauthCallback<dstd::String>::make(KAUTH_SCOPE_VNODE, callback, dstd::move(subString)));
+    return dstd::Result<dstd::KauthCallback<dstd::String>>::make(dstd::move(executionCallback));
 }

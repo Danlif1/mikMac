@@ -8,8 +8,10 @@
 
 #include "KauthCallback.hpp"
 
+#include "../Strings/String.hpp"
+
 
 /**
     Implement a callback preventing files which end with `evil` from being created
  */
-dstd::Result<dstd::KauthCallback<void*>> registerExecutionPreventorExample();
+dstd::Result<dstd::KauthCallback<dstd::String>> registerExecutionPreventorExample(dstd::String&& subString);
