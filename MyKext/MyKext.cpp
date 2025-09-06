@@ -44,8 +44,8 @@ extern "C" kern_return_t MyKext_stop (kmod_info_t * kmodInfo, void * data)
         g_context = nullptr;
     }
     
-    LOG(1, "stopping");
-    LOG(2, "Also stopping with value: kmodInfo = %p", kmodInfo);
+    LOG(dstd::LogLevel::LOG_INFO, "stopping");
+    LOG(dstd::LogLevel::LOG_INFO, "Also stopping with value: kmodInfo = %p", kmodInfo);
     printf("MyKext has stopped.\n");
     return KERN_SUCCESS;
 }
