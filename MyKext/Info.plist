@@ -20,6 +20,8 @@
 	<string>com.MyCompany.kext.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>OSBundleLibraries</key>
 	<dict>
+		<key>com.apple.iokit.IOHIDFamily</key>
+		<string>1.0.0</string>
 		<key>com.apple.kpi.libkern</key>
 		<string>10.0</string>
 	</dict>
