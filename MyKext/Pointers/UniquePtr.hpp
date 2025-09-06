@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../Checkers.hpp"
+#include "../Logger.h"
 #include "../Result.hpp"
 
 
@@ -16,24 +17,24 @@ template<typename T, typename Deleter = DefaultDeleter<T>>
 class UniquePtr {
 public:
     template<typename... Args>
-    static Result<UniquePtr<T>> make(Args... args) {
-        return makeArray(1, args...);
+    static Result<UniquePtr<T, Deleter>> make(Args&&... args) {
+        return makeArray(1, move(args)...);
     }
     
     template<typename... Args>
-    static Result<UniquePtr<T>> makeArray(const size_t size, Args... args) {
-        return makeArrayWithDeleter(DefaultDeleter<T>(), size, args...);
+    static Result<UniquePtr<T, Deleter>> makeArray(const size_t size, Args&&... args) {
+        return makeArrayWithDeleter(Deleter(), size, move(args)...);
     }
     
     template<typename... Args>
-    static Result<UniquePtr<T, Deleter>> makeArrayWithDeleter(Deleter deleter, const size_t size, Args... args) {
+    static Result<UniquePtr<T, Deleter>> makeArrayWithDeleter(Deleter deleter, const size_t size, Args&&... args) {
         void* raw = operator new[](size * sizeof(T));
         GENERIC_CHECK(nullptr != raw, KERN_NO_SPACE);
         
         auto array = static_cast<T*>(raw);
         
         for (size_t i = 0; i < size; i++) {
-            new (&array[i]) T(args...);
+            new (&array[i]) T(move(args)...);
         }
         
         UniquePtr result(array, size, deleter);
@@ -69,6 +70,10 @@ public:
     
     ~UniquePtr() {
         reset();
+    }
+    
+    bool operator==(const UniquePtr<T, Deleter>& other) const {
+        return m_value == other.m_value && m_size == other.m_size;
     }
     
     T* operator*() {
