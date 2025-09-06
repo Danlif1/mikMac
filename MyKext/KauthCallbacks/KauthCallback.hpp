@@ -22,16 +22,17 @@ struct KauthCallbackDeleter
     void operator()(kauth_listener_t* listenerPointer);
 };
 
-template<typename T = void*, typename Deleter = DefaultDeleter<T>>
+template<typename T>
 class KauthCallback
 {
 public:
-    static Result<KauthCallback<T, Deleter>> make(const char* identifier, kauth_scope_callback_t callback, Optional<UniquePtr<T, Deleter>>&& data) {
+    static Result<KauthCallback<T>> make(const char* identifier, kauth_scope_callback_t callback, T&& data) {
         GENERIC_CHECK(nullptr != identifier, KERN_INVALID_ADDRESS);
         
-        KauthCallback<T, Deleter> result(move(data));
+        CHECK_RESULT(context, UniquePtr<T>::make(data));
+        KauthCallback<T> result(move(context));
         
-        auto rawListener = kauth_listen_scope(identifier, callback, result.getData());
+        auto rawListener = kauth_listen_scope(identifier, callback, result.m_data.getValue());
         GENERIC_CHECK(nullptr != rawListener, KERN_FAILURE);
         
         auto listenerResult = UniquePtr<kauth_listener_t, KauthCallbackDeleter>::make(rawListener);
@@ -40,13 +41,12 @@ public:
             return dstd::Result<void>::makeError(KERN_FAILURE);
         }
         
-        UniquePtr<kauth_listener_t, KauthCallbackDeleter>& value = listenerResult.value();
-        result.m_listener = move(value);
+        result.m_listener = move(listenerResult.value());
         
-        return Result<KauthCallback<T, Deleter>>::make(move(result));
+        return Result<KauthCallback<T>>::make(move(result));
     }
     
-    bool operator==(const KauthCallback<T, Deleter>& other) const {
+    bool operator==(const KauthCallback<T>& other) const {
         return m_data == other.m_data && m_listener == other.m_listener;
     }
 
@@ -55,22 +55,67 @@ public:
     }
     
     T* getData() {
-        return m_data.value().getValue();
+        return &m_data.getValue();
     }
     
 private:
-    KauthCallback(UniquePtr<kauth_listener_t, KauthCallbackDeleter>&& listener, UniquePtr<T, Deleter>&& data)
+    KauthCallback(UniquePtr<kauth_listener_t, KauthCallbackDeleter>&& listener, UniquePtr<T>&& data)
         : m_listener(move(listener))
         , m_data(move(data))
     {}
     
-    KauthCallback(Optional<UniquePtr<T, Deleter>>&& data)
+    KauthCallback(UniquePtr<T>&& data)
         : m_listener()
         , m_data(move(data))
     {}
     
     Optional<UniquePtr<kauth_listener_t, KauthCallbackDeleter>> m_listener;
-    Optional<UniquePtr<T, Deleter>> m_data;
+    UniquePtr<T> m_data;
+};
+
+template<>
+class KauthCallback<void> {
+public:
+    static Result<KauthCallback<void>> make(const char* identifier, kauth_scope_callback_t callback) {
+        GENERIC_CHECK(nullptr != identifier, KERN_INVALID_ADDRESS);
+
+        KauthCallback<void> result;
+        auto rawListener = kauth_listen_scope(identifier, callback, nullptr);
+        GENERIC_CHECK(nullptr != rawListener, KERN_FAILURE);
+        
+        auto listenerResult = UniquePtr<kauth_listener_t, KauthCallbackDeleter>::make(rawListener);
+        if (listenerResult.hasError()) {
+            KauthCallbackDeleter()(&rawListener);
+            return dstd::Result<void>::makeError(KERN_FAILURE);
+        }
+        
+        result.m_listener = move(listenerResult.value());
+        
+        return Result<KauthCallback<void>>::make(move(result));
+    }
+    
+    bool operator==(const KauthCallback<void>& other) const {
+        return m_listener == other.m_listener;
+    }
+
+    bool isValid() {
+        return m_listener.hasValue();
+    }
+    
+    void* getData() {
+        return nullptr;
+    }
+    
+private:
+    KauthCallback(UniquePtr<kauth_listener_t, KauthCallbackDeleter>&& listener)
+        : m_listener(move(listener))
+    {}
+    
+    KauthCallback()
+        : m_listener()
+    {}
+    
+    Optional<UniquePtr<kauth_listener_t, KauthCallbackDeleter>> m_listener;
 };
 
 } // namespace dstd
