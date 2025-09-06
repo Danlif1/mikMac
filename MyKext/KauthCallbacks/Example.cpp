@@ -29,6 +29,29 @@ dstd::Result<dstd::String> getVnodePath(vnode_t vnode) {
     return dstd::Result<dstd::String>::make(dstd::move(shortName));
 }
 
+dstd::Result<int> callbackImp(kauth_cred_t credential,
+                              void* voidData,
+                              kauth_action_t action,
+                              uintptr_t context,
+                              vnode_t currentVnode,
+                              uintptr_t parentVnode,
+                              uintptr_t error) {
+    // Start by checking if the action is execution.
+    GENERIC_CHECK_NO_LOG(action & KAUTH_VNODE_EXECUTE, KERN_SUCCESS);
+    
+    GENERIC_CHECK(nullptr != voidData, KERN_INVALID_ADDRESS, "data is nullptr");
+    dstd::String* data = static_cast<dstd::String*>(voidData);
+    
+    // Get the vnode file path.
+    CHECK_RESULT(path, getVnodePath(currentVnode), "Failed to get path");
+    
+    // Check if it ends with evil.
+    GENERIC_CHECK_NO_LOG(nullptr != dstd::strstr(path.c_str(), data->c_str()), KERN_SUCCESS);
+    
+    LOG(dstd::LogLevel::LOG_INFO, "Tried executing: %s", path.c_str());
+    return dstd::Result<int>::make(KAUTH_RESULT_DENY);
+}
+
 int callback(kauth_cred_t credential,
              void* voidData,
              kauth_action_t action,
@@ -36,41 +59,12 @@ int callback(kauth_cred_t credential,
              uintptr_t currentVnode,
              uintptr_t parentVnode,
              uintptr_t error) {
-    // Start by checking if the action is execution.
-    if (!(action & KAUTH_VNODE_EXECUTE)) {
-        // Not interesting.
-        return KAUTH_RESULT_DEFER;
+    
+    auto resultStatus = callbackImp(credential, voidData, action, context, reinterpret_cast<vnode_t>(currentVnode), parentVnode, error);
+    if (resultStatus.hasValue()) {
+        return resultStatus.value();
     }
-    
-    if (nullptr == voidData) {
-        LOG(4, "data is nullptr");
-        return KAUTH_RESULT_DEFER;
-    }
-    dstd::String* data = static_cast<dstd::String*>(voidData);
-    
-    // Get the vnode file path.
-    auto pathResult = getVnodePath(reinterpret_cast<vnode_t>(currentVnode));
-    if (pathResult.hasError()) {
-        LOG(5, "Failed to get path, error: %d", pathResult.error());
-        return KAUTH_RESULT_DEFER;
-    }
-    
-    auto path = dstd::move(pathResult.value());
-    
-    // Check if the path is too short so we won't go out of bounds.
-    if (4 > path.size()) {
-        // Too short to be our unwanted files.
-        return KAUTH_RESULT_DEFER;
-    }
-    
-    // Check if it ends with evil.
-    // path.getSize() is out of bounds, path.getSize() - 1 is \0.
-    if (nullptr != dstd::strstr(path.c_str(), data->c_str())) {
-        LOG(3, "Tried executing: %s", path.c_str());
-        // Deny it.
-        return KAUTH_RESULT_DENY;
-    }
-    
+        
     return KAUTH_RESULT_DEFER;
 }
 
