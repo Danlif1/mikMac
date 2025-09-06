@@ -7,4 +7,10 @@
 
 #define DRIVER_ID "MyKext:"
 
-#define LOG(logLevel, message, ...) printf(DRIVER_ID " level: %d, file: %s, function: %s, line %d " message "\n" , logLevel, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
+#define LOG(logLevel, message, ...) \
+printf(DRIVER_ID " level: %d, file: %s, function: %s, line %d " message "\n" , \
+       logLevel, \
+       __FILE__, \
+       __func__, \
+       __LINE__, \
+       ##__VA_ARGS__)
