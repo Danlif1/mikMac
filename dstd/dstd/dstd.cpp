@@ -31,13 +31,13 @@ dstd::Result<void> startImp(kmod_info_t * kmodInfo, void * data) {
     return {};
 }
 
-extern "C" kern_return_t MyKext_start (kmod_info_t * kmodInfo, void * data)
+extern "C" kern_return_t dstd_start (kmod_info_t * kmodInfo, void * data)
 {
     LOG(dstd::LogLevel::LOG_DEBUG, "starting with info kmodInfo: %p, data: %p", kmodInfo, data);
     return startImp(kmodInfo, data);
 }
  
-extern "C" kern_return_t MyKext_stop (kmod_info_t * kmodInfo, void * data)
+extern "C" kern_return_t dstd_stop (kmod_info_t * kmodInfo, void * data)
 {
     if (nullptr != g_context) {
         delete g_context;

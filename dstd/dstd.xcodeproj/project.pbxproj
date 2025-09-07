@@ -7,32 +7,32 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		BBE1F02B2DFD7AA500FCB7D3 /* MyKext.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyKext.kext; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB7003D42E6E2366000DBE96 /* dstd.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dstd.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BBE1F0312DFD7AA500FCB7D3 /* Exceptions for "MyKext" folder in "MyKext" target */ = {
+		BB7003DA2E6E2366000DBE96 /* Exceptions for "dstd" folder in "dstd" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = BBE1F02A2DFD7AA500FCB7D3 /* MyKext */;
+			target = BB7003D32E6E2366000DBE96 /* dstd */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BBE1F02D2DFD7AA500FCB7D3 /* MyKext */ = {
+		BB7003D62E6E2366000DBE96 /* dstd */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				BBE1F0312DFD7AA500FCB7D3 /* Exceptions for "MyKext" folder in "MyKext" target */,
+				BB7003DA2E6E2366000DBE96 /* Exceptions for "dstd" folder in "dstd" target */,
 			);
-			path = MyKext;
+			path = dstd;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		BBE1F0282DFD7AA500FCB7D3 /* Frameworks */ = {
+		BB7003D12E6E2366000DBE96 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,18 +42,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BBE1F0212DFD7AA500FCB7D3 = {
+		BB7003CA2E6E2366000DBE96 = {
 			isa = PBXGroup;
 			children = (
-				BBE1F02D2DFD7AA500FCB7D3 /* MyKext */,
-				BBE1F02C2DFD7AA500FCB7D3 /* Products */,
+				BB7003D62E6E2366000DBE96 /* dstd */,
+				BB7003D52E6E2366000DBE96 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		BBE1F02C2DFD7AA500FCB7D3 /* Products */ = {
+		BB7003D52E6E2366000DBE96 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBE1F02B2DFD7AA500FCB7D3 /* MyKext.kext */,
+				BB7003D42E6E2366000DBE96 /* dstd.kext */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		BBE1F0262DFD7AA500FCB7D3 /* Headers */ = {
+		BB7003CF2E6E2366000DBE96 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -71,64 +71,64 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BBE1F02A2DFD7AA500FCB7D3 /* MyKext */ = {
+		BB7003D32E6E2366000DBE96 /* dstd */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BBE1F0322DFD7AA500FCB7D3 /* Build configuration list for PBXNativeTarget "MyKext" */;
+			buildConfigurationList = BB7003DB2E6E2366000DBE96 /* Build configuration list for PBXNativeTarget "dstd" */;
 			buildPhases = (
-				BBE1F0262DFD7AA500FCB7D3 /* Headers */,
-				BBE1F0272DFD7AA500FCB7D3 /* Sources */,
-				BBE1F0282DFD7AA500FCB7D3 /* Frameworks */,
-				BBE1F0292DFD7AA500FCB7D3 /* Resources */,
+				BB7003CF2E6E2366000DBE96 /* Headers */,
+				BB7003D02E6E2366000DBE96 /* Sources */,
+				BB7003D12E6E2366000DBE96 /* Frameworks */,
+				BB7003D22E6E2366000DBE96 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BBE1F02D2DFD7AA500FCB7D3 /* MyKext */,
+				BB7003D62E6E2366000DBE96 /* dstd */,
 			);
-			name = MyKext;
+			name = dstd;
 			packageProductDependencies = (
 			);
-			productName = MyKext;
-			productReference = BBE1F02B2DFD7AA500FCB7D3 /* MyKext.kext */;
+			productName = dstd;
+			productReference = BB7003D42E6E2366000DBE96 /* dstd.kext */;
 			productType = "com.apple.product-type.kernel-extension";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		BBE1F0222DFD7AA500FCB7D3 /* Project object */ = {
+		BB7003CB2E6E2366000DBE96 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
-					BBE1F02A2DFD7AA500FCB7D3 = {
-						CreatedOnToolsVersion = 16.2;
+					BB7003D32E6E2366000DBE96 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
-			buildConfigurationList = BBE1F0252DFD7AA500FCB7D3 /* Build configuration list for PBXProject "MyKext" */;
+			buildConfigurationList = BB7003CE2E6E2366000DBE96 /* Build configuration list for PBXProject "dstd" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = BBE1F0212DFD7AA500FCB7D3;
+			mainGroup = BB7003CA2E6E2366000DBE96;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = BBE1F02C2DFD7AA500FCB7D3 /* Products */;
+			productRefGroup = BB7003D52E6E2366000DBE96 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BBE1F02A2DFD7AA500FCB7D3 /* MyKext */,
+				BB7003D32E6E2366000DBE96 /* dstd */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		BBE1F0292DFD7AA500FCB7D3 /* Resources */ = {
+		BB7003D22E6E2366000DBE96 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -138,7 +138,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BBE1F0272DFD7AA500FCB7D3 /* Sources */ = {
+		BB7003D02E6E2366000DBE96 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -148,7 +148,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		BBE1F0332DFD7AA500FCB7D3 /* Debug */ = {
+		BB7003DC2E6E2366000DBE96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
@@ -156,24 +156,26 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 48LB6H894X;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MyKext/Info.plist;
+				INFOPLIST_FILE = dstd/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = dstd;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				MODULE_NAME = daniel1.MyKext;
-				MODULE_START = MyKext_start;
-				MODULE_STOP = MyKext_stop;
+				MODULE_NAME = daniel1.dstd;
+				MODULE_START = dstd_start;
+				MODULE_STOP = dstd_stop;
 				MODULE_VERSION = 1.0.0d1;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = daniel1.MyKext;
+				PRODUCT_BUNDLE_IDENTIFIER = daniel1.dstd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SYMROOT = "$(SRCROOT)/bin/$(CONFIGURATION)";
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Debug;
 		};
-		BBE1F0342DFD7AA500FCB7D3 /* Release */ = {
+		BB7003DD2E6E2366000DBE96 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
@@ -181,24 +183,25 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 48LB6H894X;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MyKext/Info.plist;
+				INFOPLIST_FILE = dstd/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = dstd;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				MODULE_NAME = daniel1.MyKext;
-				MODULE_START = MyKext_start;
-				MODULE_STOP = MyKext_stop;
+				MODULE_NAME = daniel1.dstd;
+				MODULE_START = dstd_start;
+				MODULE_STOP = dstd_stop;
 				MODULE_VERSION = 1.0.0d1;
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = daniel1.MyKext;
+				PRODUCT_BUNDLE_IDENTIFIER = daniel1.dstd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SYMROOT = "$(SRCROOT)/bin/$(CONFIGURATION)";
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Release;
 		};
-		BBE1F0352DFD7AA500FCB7D3 /* Debug */ = {
+		BB7003DE2E6E2366000DBE96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -233,6 +236,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 48LB6H894X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -251,16 +255,15 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				SYMROOT = "$(SRCROOT)/bin/$(CONFIGURATION)";
 			};
 			name = Debug;
 		};
-		BBE1F0362DFD7AA500FCB7D3 /* Release */ = {
+		BB7003DF2E6E2366000DBE96 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -295,6 +298,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 48LB6H894X;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -307,36 +311,35 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
-				SYMROOT = "$(SRCROOT)/bin/$(CONFIGURATION)";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BBE1F0252DFD7AA500FCB7D3 /* Build configuration list for PBXProject "MyKext" */ = {
+		BB7003CE2E6E2366000DBE96 /* Build configuration list for PBXProject "dstd" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BBE1F0352DFD7AA500FCB7D3 /* Debug */,
-				BBE1F0362DFD7AA500FCB7D3 /* Release */,
+				BB7003DE2E6E2366000DBE96 /* Debug */,
+				BB7003DF2E6E2366000DBE96 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BBE1F0322DFD7AA500FCB7D3 /* Build configuration list for PBXNativeTarget "MyKext" */ = {
+		BB7003DB2E6E2366000DBE96 /* Build configuration list for PBXNativeTarget "dstd" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BBE1F0332DFD7AA500FCB7D3 /* Debug */,
-				BBE1F0342DFD7AA500FCB7D3 /* Release */,
+				BB7003DC2E6E2366000DBE96 /* Debug */,
+				BB7003DD2E6E2366000DBE96 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = BBE1F0222DFD7AA500FCB7D3 /* Project object */;
+	rootObject = BB7003CB2E6E2366000DBE96 /* Project object */;
 }
