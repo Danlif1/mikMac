@@ -6,9 +6,9 @@
 //
 #pragma once
 
-#include "KauthCallbacks/KauthCallback.hpp"
+#include "dstd/KauthCallbacks/KauthCallback.hpp"
 
-#include "Strings/String.hpp"
+#include "dstd/Strings/String.hpp"
 
 
 struct Context {
