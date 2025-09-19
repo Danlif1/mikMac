@@ -6,8 +6,43 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BBD4316C2E7DE122009FE817 /* Kernel.framework in Resources */ = {isa = PBXBuildFile; fileRef = BBD431672E7DE122009FE817 /* Kernel.framework */; };
+		BBD4316D2E7DE122009FE817 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BBD431662E7DE122009FE817 /* Info.plist */; };
+		BBD4316E2E7DE122009FE817 /* SharedPtr.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD4315A2E7DE122009FE817 /* SharedPtr.hpp */; };
+		BBD4316F2E7DE122009FE817 /* String.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431602E7DE122009FE817 /* String.hpp */; };
+		BBD431702E7DE122009FE817 /* Checkers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431652E7DE122009FE817 /* Checkers.hpp */; };
+		BBD431712E7DE122009FE817 /* Result.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD4316A2E7DE122009FE817 /* Result.hpp */; };
+		BBD431722E7DE122009FE817 /* Logger.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431682E7DE122009FE817 /* Logger.hpp */; };
+		BBD431732E7DE122009FE817 /* Optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431692E7DE122009FE817 /* Optional.hpp */; };
+		BBD431742E7DE122009FE817 /* Address.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD4315D2E7DE122009FE817 /* Address.hpp */; };
+		BBD431752E7DE122009FE817 /* Move.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431632E7DE122009FE817 /* Move.hpp */; };
+		BBD431762E7DE122009FE817 /* Memory.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431582E7DE122009FE817 /* Memory.hpp */; };
+		BBD431772E7DE122009FE817 /* KauthCallback.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD431552E7DE122009FE817 /* KauthCallback.hpp */; };
+		BBD431782E7DE122009FE817 /* UniquePtr.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBD4315B2E7DE122009FE817 /* UniquePtr.hpp */; };
+		BBD431792E7DE122009FE817 /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBD431612E7DE122009FE817 /* String.cpp */; };
+		BBD4317A2E7DE122009FE817 /* Address.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBD4315E2E7DE122009FE817 /* Address.cpp */; };
+		BBD4317B2E7DE122009FE817 /* KauthCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBD431562E7DE122009FE817 /* KauthCallback.cpp */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		BB7007152E71FDEF000DBE96 /* ProcessCreationPreventor.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProcessCreationPreventor.kext; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBD431552E7DE122009FE817 /* KauthCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KauthCallback.hpp; sourceTree = "<group>"; };
+		BBD431562E7DE122009FE817 /* KauthCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KauthCallback.cpp; sourceTree = "<group>"; };
+		BBD431582E7DE122009FE817 /* Memory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Memory.hpp; sourceTree = "<group>"; };
+		BBD4315A2E7DE122009FE817 /* SharedPtr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SharedPtr.hpp; sourceTree = "<group>"; };
+		BBD4315B2E7DE122009FE817 /* UniquePtr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UniquePtr.hpp; sourceTree = "<group>"; };
+		BBD4315D2E7DE122009FE817 /* Address.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Address.hpp; sourceTree = "<group>"; };
+		BBD4315E2E7DE122009FE817 /* Address.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Address.cpp; sourceTree = "<group>"; };
+		BBD431602E7DE122009FE817 /* String.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = String.hpp; sourceTree = "<group>"; };
+		BBD431612E7DE122009FE817 /* String.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = String.cpp; sourceTree = "<group>"; };
+		BBD431632E7DE122009FE817 /* Move.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Move.hpp; sourceTree = "<group>"; };
+		BBD431652E7DE122009FE817 /* Checkers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Checkers.hpp; sourceTree = "<group>"; };
+		BBD431662E7DE122009FE817 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BBD431672E7DE122009FE817 /* Kernel.framework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Kernel.framework; sourceTree = "<group>"; };
+		BBD431682E7DE122009FE817 /* Logger.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Logger.hpp; sourceTree = "<group>"; };
+		BBD431692E7DE122009FE817 /* Optional.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Optional.hpp; sourceTree = "<group>"; };
+		BBD4316A2E7DE122009FE817 /* Result.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Result.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,6 +80,7 @@
 		BB70070B2E71FDEF000DBE96 = {
 			isa = PBXGroup;
 			children = (
+				BBD4316B2E7DE122009FE817 /* dstd */,
 				BB7007172E71FDEF000DBE96 /* ProcessCreationPreventor */,
 				BB7007162E71FDEF000DBE96 /* Products */,
 			);
@@ -58,6 +94,78 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BBD431572E7DE122009FE817 /* KauthCallbacks */ = {
+			isa = PBXGroup;
+			children = (
+				BBD431552E7DE122009FE817 /* KauthCallback.hpp */,
+				BBD431562E7DE122009FE817 /* KauthCallback.cpp */,
+			);
+			path = KauthCallbacks;
+			sourceTree = "<group>";
+		};
+		BBD431592E7DE122009FE817 /* Memory */ = {
+			isa = PBXGroup;
+			children = (
+				BBD431582E7DE122009FE817 /* Memory.hpp */,
+			);
+			path = Memory;
+			sourceTree = "<group>";
+		};
+		BBD4315C2E7DE122009FE817 /* Pointers */ = {
+			isa = PBXGroup;
+			children = (
+				BBD4315A2E7DE122009FE817 /* SharedPtr.hpp */,
+				BBD4315B2E7DE122009FE817 /* UniquePtr.hpp */,
+			);
+			path = Pointers;
+			sourceTree = "<group>";
+		};
+		BBD4315F2E7DE122009FE817 /* Signatures */ = {
+			isa = PBXGroup;
+			children = (
+				BBD4315D2E7DE122009FE817 /* Address.hpp */,
+				BBD4315E2E7DE122009FE817 /* Address.cpp */,
+			);
+			path = Signatures;
+			sourceTree = "<group>";
+		};
+		BBD431622E7DE122009FE817 /* Strings */ = {
+			isa = PBXGroup;
+			children = (
+				BBD431602E7DE122009FE817 /* String.hpp */,
+				BBD431612E7DE122009FE817 /* String.cpp */,
+			);
+			path = Strings;
+			sourceTree = "<group>";
+		};
+		BBD431642E7DE122009FE817 /* TypeTraites */ = {
+			isa = PBXGroup;
+			children = (
+				BBD431632E7DE122009FE817 /* Move.hpp */,
+			);
+			path = TypeTraites;
+			sourceTree = "<group>";
+		};
+		BBD4316B2E7DE122009FE817 /* dstd */ = {
+			isa = PBXGroup;
+			children = (
+				BBD431572E7DE122009FE817 /* KauthCallbacks */,
+				BBD431592E7DE122009FE817 /* Memory */,
+				BBD4315C2E7DE122009FE817 /* Pointers */,
+				BBD4315F2E7DE122009FE817 /* Signatures */,
+				BBD431622E7DE122009FE817 /* Strings */,
+				BBD431642E7DE122009FE817 /* TypeTraites */,
+				BBD431652E7DE122009FE817 /* Checkers.hpp */,
+				BBD431662E7DE122009FE817 /* Info.plist */,
+				BBD431672E7DE122009FE817 /* Kernel.framework */,
+				BBD431682E7DE122009FE817 /* Logger.hpp */,
+				BBD431692E7DE122009FE817 /* Optional.hpp */,
+				BBD4316A2E7DE122009FE817 /* Result.hpp */,
+			);
+			name = dstd;
+			path = ../dstd/dstd;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -65,6 +173,17 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBD4316E2E7DE122009FE817 /* SharedPtr.hpp in Headers */,
+				BBD4316F2E7DE122009FE817 /* String.hpp in Headers */,
+				BBD431702E7DE122009FE817 /* Checkers.hpp in Headers */,
+				BBD431712E7DE122009FE817 /* Result.hpp in Headers */,
+				BBD431722E7DE122009FE817 /* Logger.hpp in Headers */,
+				BBD431732E7DE122009FE817 /* Optional.hpp in Headers */,
+				BBD431742E7DE122009FE817 /* Address.hpp in Headers */,
+				BBD431752E7DE122009FE817 /* Move.hpp in Headers */,
+				BBD431762E7DE122009FE817 /* Memory.hpp in Headers */,
+				BBD431772E7DE122009FE817 /* KauthCallback.hpp in Headers */,
+				BBD431782E7DE122009FE817 /* UniquePtr.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +251,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBD4316C2E7DE122009FE817 /* Kernel.framework in Resources */,
+				BBD4316D2E7DE122009FE817 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,6 +263,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBD431792E7DE122009FE817 /* String.cpp in Sources */,
+				BBD4317A2E7DE122009FE817 /* Address.cpp in Sources */,
+				BBD4317B2E7DE122009FE817 /* KauthCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,6 +280,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 48LB6H894X;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../dstd/**";
 				INFOPLIST_FILE = ProcessCreationPreventor/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PCP;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -182,6 +307,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 48LB6H894X;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../dstd/**";
 				INFOPLIST_FILE = ProcessCreationPreventor/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PCP;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
