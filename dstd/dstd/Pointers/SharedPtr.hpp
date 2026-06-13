@@ -116,11 +116,11 @@ public:
     
 private:
     int64_t increment() {
-        return OSIncrementAtomic64(m_counter);
+        return OSIncrementAtomic64(m_counter) + 1;
     }
     
     int64_t decrement() {
-        return OSDecrementAtomic64(m_counter);
+        return OSDecrementAtomic64(m_counter) - 1;
     }
     
     void reset() {
