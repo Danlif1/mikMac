@@ -23,17 +23,31 @@ dstd::Result<void> runTest(const char* name, dstd::Result<void> (*testFunction)(
 
 } // namespace
 
+#define RUN_TEST(name, testFunction) \
+    if (runTest(name, testFunction).hasError()) { \
+        anyFailed = true; \
+    }
+
 dstd::Result<void> runAllTests() {
-    CHECK_RESULT_NO_VALUE(runTest("Result", testResult), "Result tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("Optional", testOptional), "Optional tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("UniquePtr", testUniquePtr), "UniquePtr tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("SharedPtr", testSharedPtr), "SharedPtr tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("RawBuffer", testRawBuffer), "RawBuffer tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("String", testString), "String tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("Vector", testVector), "Vector tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("Array", testArray), "Array tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("Tuple", testTuple), "Tuple tests failed");
-    CHECK_RESULT_NO_VALUE(runTest("Map", testMap), "Map tests failed");
+    bool anyFailed = false;
+
+    RUN_TEST("Result", testResult);
+    RUN_TEST("Optional", testOptional);
+    RUN_TEST("UniquePtr", testUniquePtr);
+    RUN_TEST("SharedPtr", testSharedPtr);
+    RUN_TEST("RawBuffer", testRawBuffer);
+    RUN_TEST("String", testString);
+    RUN_TEST("Vector", testVector);
+    RUN_TEST("Array", testArray);
+    RUN_TEST("Tuple", testTuple);
+    RUN_TEST("Map", testMap);
+    RUN_TEST("Singleton", testSingleton);
+    RUN_TEST("File", testFile);
+
+    if (anyFailed) {
+        LOG(dstd::LogLevel::LOG_ERROR, "tests: one or more test suites failed");
+        return dstd::Result<void>::makeError(KERN_FAILURE);
+    }
 
     LOG(dstd::LogLevel::LOG_INFO, "tests: all tests passed");
     return dstd::Result<void>::make();

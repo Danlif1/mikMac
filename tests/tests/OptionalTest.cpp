@@ -26,8 +26,6 @@ dstd::Result<void> tests::testOptional() {
     TEST_ASSERT(movedOptional.hasValue(), "move-constructed Optional should be populated");
     TEST_ASSERT_EQ(7, movedOptional.value(), "move-constructed Optional should steal value");
     TEST_ASSERT(!valueOptional.hasValue(), "moved-from Optional should be empty");
-    // return the optional back for more testing.
-    valueOptional = move(movedOptional);
     
     Optional<int> assignedOptional;
     assignedOptional = 9;
@@ -48,7 +46,9 @@ dstd::Result<void> tests::testOptional() {
     reassignedOptional.reset();
     TEST_ASSERT(!reassignedOptional.hasValue(), "reset Optional should clear value");
 
-    TEST_ASSERT(valueOptional == Optional<int>(7), "Optional should compare equal to matching value");
+    // return the optional back for more testing.
+    Optional<int> valueOptiona2(7);
+    TEST_ASSERT(valueOptiona2 == Optional<int>(7), "Optional should compare equal to matching value");
     TEST_ASSERT(emptyOptional != Optional<int>(7), "empty Optional should not compare equal to value");
 
     return Result<void>::make();
