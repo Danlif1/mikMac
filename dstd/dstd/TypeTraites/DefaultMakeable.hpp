@@ -35,4 +35,23 @@ public:
 template<typename T>
 constexpr bool DefaultMakeable_v = DefaultMakeable<T>::value;
 
+template<typename T, typename... Args>
+struct Makeable {
+private:
+    template<typename U>
+    static auto test(int) -> typename enable_if<
+        is_same<Result<U>, remove_cvref_t<decltype(U::make(declval<Args>()...))>>::value,
+        true_type
+    >::type;
+
+    template<typename>
+    static false_type test(...);
+
+public:
+    static constexpr bool value = decltype(test<T>(0))::value;
+};
+
+template<typename T, typename... Args>
+constexpr bool Makeable_v = Makeable<T, Args...>::value;
+
 } // namespace dstd
