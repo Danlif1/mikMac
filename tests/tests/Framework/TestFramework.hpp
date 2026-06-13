@@ -54,5 +54,6 @@ dstd::Result<void> testVector();
 dstd::Result<void> testArray();
 dstd::Result<void> testTuple();
 dstd::Result<void> testMap();
+dstd::Result<void> testFile();
 
 } // namespace tests

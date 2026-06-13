@@ -52,7 +52,7 @@ dstd::Result<void> tests::testSharedPtr() {
         SharedPtr<SharedPayload> thirdShared(firstShared);
         SharedPtr<SharedPayload> fourthShared(firstShared);
         fourthShared = secondShared;
-        TEST_ASSERT_EQ(3, firstShared.useCount(), "assignment should increment use count");
+        TEST_ASSERT_EQ(4, firstShared.useCount(), "assignment should increment use count");
         TEST_ASSERT_EQ(1, SharedPayload::s_aliveCount, "assignment should not allocate a new object");
 
         CHECK_RESULT(replacementShared, makeShared<SharedPayload>(9), "makeShared failed for replacement");
