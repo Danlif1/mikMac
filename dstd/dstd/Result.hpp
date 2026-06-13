@@ -1,6 +1,6 @@
 //
 //  Result.hpp
-//  MyKext
+//  dstd
 //
 //  Created by Daniel Lifshitz on 29/08/2025.
 //
@@ -8,6 +8,7 @@
 
 #include <mach/mach_types.h>
 
+#include "Checkers.hpp"
 #include "Optional.hpp"
 
 
@@ -32,7 +33,6 @@ public:
     }
     
     kern_return_t value() const {
-        // in <void> the value is also the error so we return it here too.
         return m_error;
     }
     
@@ -44,7 +44,7 @@ public:
         return m_error;
     }
     
-    operator kern_return_t() {
+    operator kern_return_t() const {
         return m_error;
     }
     
@@ -71,17 +71,13 @@ public:
         return KERN_SUCCESS == m_error && m_value.hasValue();
     }
     
-    /**
-        We trust the user to use it only when it's valid.
-     */
     T& value() {
+        BREAK_IF_DEBUGGER_PRESENT(hasValue());
         return m_value.value();
     }
     
-    /**
-        We trust the user to use it only when it's valid.
-     */
     const T& value() const {
+        BREAK_IF_DEBUGGER_PRESENT(hasValue());
         return m_value.value();
     }
     
@@ -98,7 +94,7 @@ public:
     }
     
     Result()
-        : m_error(KERN_SUCCESS)
+        : m_error(KERN_FAILURE)
     {}
     
     Result(const Result<void>& other)

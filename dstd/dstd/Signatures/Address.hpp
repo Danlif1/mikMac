@@ -1,12 +1,12 @@
 //
 //  Addresses.hpp
-//  ProcessCreationPreventor
+//  dstd
 //
 //  Created by Daniel Lifshitz on 19/09/2025.
 //
 #pragma once
 
-#include "../Result.hpp"
+#include "Result.hpp"
 
 
 namespace dstd::unstable {

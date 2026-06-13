@@ -8,10 +8,10 @@
 
 #include <sys/kauth.h>
 
-#include "../Checkers.hpp"
-#include "../Result.hpp"
+#include "Checkers.hpp"
+#include "Result.hpp"
 
-#include "../Pointers/UniquePtr.hpp"
+#include "Pointers/UniquePtr.hpp"
 
 
 namespace dstd {
