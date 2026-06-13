@@ -1,13 +1,14 @@
 //
 //  UniquePtr.hpp
-//  MyKext
+//  dstd
 //
 //  Created by Daniel Lifshitz on 22/08/2025.
 //
 #pragma once
 
-#include "../Checkers.hpp"
-#include "../Result.hpp"
+#include "TypeTraites/TypeTraites.hpp"
+#include "Checkers.hpp"
+#include "Result.hpp"
 
 
 namespace dstd {
@@ -17,39 +18,25 @@ class UniquePtr {
 public:
     template<typename... Args>
     static Result<UniquePtr<T, Deleter>> make(Args&&... args) {
-        return makeArray(1, move(args)...);
+        T* object = new T(forward<Args>(args)...);
+        GENERIC_CHECK(nullptr != object, KERN_NO_SPACE, "Failed to allocate memory for unique pointer");
+
+        return Result<UniquePtr<T, Deleter>>::make(UniquePtr<T, Deleter>(object, Deleter()));
     }
     
-    template<typename... Args>
-    static Result<UniquePtr<T, Deleter>> makeArray(const size_t size, Args&&... args) {
-        return makeArrayWithDeleter(Deleter(), size, move(args)...);
-    }
-    
-    template<typename... Args>
-    static Result<UniquePtr<T, Deleter>> makeArrayWithDeleter(Deleter deleter, const size_t size, Args&&... args) {
-        void* raw = operator new[](size * sizeof(T));
-        GENERIC_CHECK(nullptr != raw, KERN_NO_SPACE, "Failed to allocate memory");
-        
-        auto array = static_cast<T*>(raw);
-        
-        for (size_t i = 0; i < size; i++) {
-            new (&array[i]) T(move(args)...);
-        }
-        
-        UniquePtr result(array, size, deleter);
-        return Result<UniquePtr<T, Deleter>>::make(move(result));
-    }
+    UniquePtr(T* value, Deleter deleter = Deleter())
+        : m_value(value)
+        , m_deleter(deleter)
+    {}
     
     UniquePtr(UniquePtr&) = delete;
     UniquePtr& operator=(const UniquePtr&) = delete;
     
     UniquePtr(UniquePtr&& other)
         : m_value(other.m_value)
-        , m_size(other.m_size)
         , m_deleter(other.m_deleter)
     {
         other.m_value = nullptr;
-        other.m_size = 0;
     }
     
     UniquePtr& operator=(UniquePtr&& other) {
@@ -60,11 +47,11 @@ public:
         reset();
         
         m_value = other.m_value;
-        m_size = other.m_size;
         m_deleter = other.m_deleter;
         
         other.m_value = nullptr;
-        other.m_size = 0;
+        
+        return *this;
     }
     
     ~UniquePtr() {
@@ -72,7 +59,7 @@ public:
     }
     
     bool operator==(const UniquePtr<T, Deleter>& other) const {
-        return m_value == other.m_value && m_size == other.m_size;
+        return m_value == other.m_value;
     }
     
     T* operator*() {
@@ -91,34 +78,40 @@ public:
         return m_value;
     }
     
-    size_t getSize() const {
-        return m_size;
+    T* release() {
+        auto value = m_value;
+        m_value = nullptr;
+        
+        return value;
     }
     
 private:
-    UniquePtr(T* value, size_t size, Deleter deleter)
-        : m_value(value)
-        , m_size(size)
-        , m_deleter(deleter)
-    {}
-    
     void reset() {
         if (nullptr == m_value) {
             return;
         }
 
-        for (size_t i = 0; i < m_size; ++i) {
-            m_deleter(&m_value[i]);
-        }
-        operator delete[](m_value);
+        m_deleter(m_value);
         
         m_value = nullptr;
-        m_size = 0;
     }
     
     T* m_value;
-    size_t m_size;
     Deleter m_deleter;
 };
+
+
+template<typename T, typename Deleter, typename... Args>
+Result<UniquePtr<T, Deleter>> makeUniqueWithDeleter(Deleter deleter, Args&&... args) {
+    T* object = new T(forward<Args>(args)...);
+    GENERIC_CHECK(nullptr != object, KERN_NO_SPACE, "Failed to allocate memory for unique pointer");
+
+    return Result<UniquePtr<T, Deleter>>::make(UniquePtr<T, Deleter>(object, deleter));
+}
+
+template<typename T, typename... Args>
+Result<UniquePtr<T>> makeUnique(Args&&... args) {
+    return makeUniqueWithDeleter<T, DefaultDeleter<T>, Args...>(DefaultDeleter<T>(), forward<Args>(args)...);
+}
 
 } // namespace dstd
