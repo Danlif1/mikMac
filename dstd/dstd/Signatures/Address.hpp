@@ -12,5 +12,6 @@
 namespace dstd::unstable {
 
 Result<void*> addressFromAdrp(void* assemblyPointer);
+Result<void*> addressFromAdrl(void* assemblyPointer);
 
 } // namespace dstd::unstable
