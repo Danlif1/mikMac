@@ -41,6 +41,7 @@ dstd::Result<void> runAllTests() {
     RUN_TEST("Array", testArray);
     RUN_TEST("Tuple", testTuple);
     RUN_TEST("Map", testMap);
+    RUN_TEST("Singleton", testSingleton);
     RUN_TEST("File", testFile);
 
     if (anyFailed) {
