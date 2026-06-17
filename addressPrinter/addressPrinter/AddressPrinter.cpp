@@ -7,7 +7,7 @@
 #include <mach/mach_types.h>
 
 #include "dstd/Checkers.hpp"
-
+#include "dstd/Logger.hpp"
 #include "dstd/Signatures/Address.hpp"
 
 

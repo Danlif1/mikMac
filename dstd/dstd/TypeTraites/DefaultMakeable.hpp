@@ -33,7 +33,7 @@ public:
 };
 
 template<typename T>
-constexpr bool DefaultMakeable_v = DefaultMakeable<T>::value;
+constexpr bool DefaultMakeableV = DefaultMakeable<T>::value;
 
 template<typename T, typename... Args>
 concept Makeable = is_same<
