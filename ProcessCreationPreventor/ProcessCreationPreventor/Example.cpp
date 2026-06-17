@@ -6,6 +6,9 @@
 //
 #include <sys/vnode.h>
 
+#include "dstd/Checkers.hpp"
+#include "dstd/Logger.hpp"
+
 #include "Example.hpp"
 
 
@@ -26,7 +29,7 @@ dstd::Result<dstd::String> getVnodePath(vnode_t vnode) {
     // Copy the long buffer to a smaller one to save space.
     CHECK_RESULT(shortName, dstd::String::make(longName.c_str()), "Failed to create short name");
 
-    return dstd::Result<dstd::String>::make(dstd::move(shortName));
+    return move(shortName);
 }
 
 dstd::Result<int> callbackImp(kauth_cred_t credential,
@@ -49,7 +52,7 @@ dstd::Result<int> callbackImp(kauth_cred_t credential,
     GENERIC_CHECK_NO_LOG(nullptr != dstd::strstr(path.c_str(), data->c_str()), KERN_SUCCESS);
     
     LOG(dstd::LogLevel::LOG_INFO, "Tried executing: %s", path.c_str());
-    return dstd::Result<int>::make(KAUTH_RESULT_DENY);
+    return KAUTH_RESULT_DENY;
 }
 
 int callback(kauth_cred_t credential,
@@ -72,5 +75,5 @@ dstd::Result<dstd::KauthCallback<dstd::String>> registerExecutionPreventorExampl
     CHECK_RESULT(executionCallback,
                  dstd::KauthCallback<dstd::String>::make(KAUTH_SCOPE_VNODE, callback, dstd::move(subString)),
                  "Failed to create callback");
-    return dstd::Result<dstd::KauthCallback<dstd::String>>::make(dstd::move(executionCallback));
+    return move(executionCallback);
 }
