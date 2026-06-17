@@ -6,17 +6,25 @@
 //
 #pragma once
 
-#include "Files/Vnode.hpp"
-#include "Logger.hpp"
 #include "Result.hpp"
+
+#include "Files/Vnode.hpp"
 #include "Strings/String.hpp"
 
 
 namespace dstd {
 
+enum LogLevel {
+    LOG_DEBUG = 0,
+    LOG_INFO = 1,
+    LOG_WARNING = 2,
+    LOG_ERROR = 3,
+    LOG_CRITICAL = 4,
+};
+
 class FileLogger {
 public:
-    static Result<FileLogger> make(const String& path, const String& driverId);
+    static Result<FileLogger> make(const String& driverId, const String& path);
 
     void log(LogLevel level, const char* message, ...);
 
@@ -28,20 +36,11 @@ public:
     ~FileLogger();
 
 private:
-    FileLogger(File&& file, String&& driverId, off_t writeOffset);
+    FileLogger(String&& driverId, File&& file, off_t writeOffset);
 
     File m_file;
     String m_driverId;
     off_t m_writeOffset;
 };
-
-#define FILE_LOG(fileLogger, logLevel, message, ...) \
-    (fileLogger).log( \
-        logLevel, \
-        "file: %s, function: %s, line %d " message "\n", \
-        __FILE__, \
-        __func__, \
-        __LINE__, \
-        ##__VA_ARGS__)
 
 } // namespace dstd

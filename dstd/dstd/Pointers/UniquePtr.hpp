@@ -7,7 +7,7 @@
 #pragma once
 
 #include "TypeTraites/TypeTraites.hpp"
-#include "Checkers.hpp"
+#include "Basics.hpp"
 #include "Result.hpp"
 
 
@@ -19,9 +19,9 @@ public:
     template<typename... Args>
     static Result<UniquePtr<T, Deleter>> make(Args&&... args) {
         T* object = new T(forward<Args>(args)...);
-        GENERIC_CHECK(nullptr != object, KERN_NO_SPACE, "Failed to allocate memory for unique pointer");
+        GENERIC_CHECK_NO_LOG(nullptr != object, KERN_NO_SPACE);
 
-        return Result<UniquePtr<T, Deleter>>::make(UniquePtr<T, Deleter>(object, Deleter()));
+        return Result<UniquePtr<T, Deleter>>(UniquePtr<T, Deleter>(object, Deleter()));
     }
     
     UniquePtr(T* value, Deleter deleter = Deleter())
@@ -104,9 +104,9 @@ private:
 template<typename T, typename Deleter, typename... Args>
 Result<UniquePtr<T, Deleter>> makeUniqueWithDeleter(Deleter deleter, Args&&... args) {
     T* object = new T(forward<Args>(args)...);
-    GENERIC_CHECK(nullptr != object, KERN_NO_SPACE, "Failed to allocate memory for unique pointer");
+    GENERIC_CHECK_NO_LOG(nullptr != object, KERN_NO_SPACE);
 
-    return Result<UniquePtr<T, Deleter>>::make(UniquePtr<T, Deleter>(object, deleter));
+    return Result<UniquePtr<T, Deleter>>(UniquePtr<T, Deleter>(object, deleter));
 }
 
 template<typename T, typename... Args>

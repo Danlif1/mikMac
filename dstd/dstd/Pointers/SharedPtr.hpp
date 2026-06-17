@@ -6,11 +6,12 @@
 //
 #pragma once
 
-#include "TypeTraites/TypeTraites.hpp"
-#include "Checkers.hpp"
+#include "Basics.hpp"
 #include "Result.hpp"
+#include "TypeTraites/TypeTraites.hpp"
 
 #include <libkern/OSAtomic.h>
+
 
 namespace dstd {
 
@@ -157,16 +158,15 @@ private:
 template<typename T, typename Deleter, typename... Args>
 Result<SharedPtr<T, Deleter>> makeSharedWithDeleter(Deleter deleter, Args&&... args) {
     volatile auto counter = new int64_t(1);
-    GENERIC_CHECK(nullptr != counter, KERN_NO_SPACE, "Failed to allocate memory for counter");
+    GENERIC_CHECK_NO_LOG(nullptr != counter, KERN_NO_SPACE);
     
     T* object = new T(forward<Args>(args)...);
     if (nullptr == object) {
         delete counter;
-        LOG(LogLevel::LOG_ERROR, "Failed to allocate memory for sharedPtr");
-        return Result<void>::makeError(KERN_NO_SPACE);
+        return Error(KERN_NO_SPACE);
     }
-    
-    return Result<SharedPtr<T, Deleter>>::make(SharedPtr(object, deleter, counter));
+
+    return SharedPtr<T, Deleter>(object, deleter, counter);
 }
 
 template<typename T, typename... Args>

@@ -18,15 +18,13 @@ namespace {
 
 Result<UniquePtr<char, ArrayDeleter<char>>> allocateBuffer(size_t size) {
     if (0 == size) {
-        return Result<UniquePtr<char, ArrayDeleter<char>>>::make(
-            UniquePtr<char, ArrayDeleter<char>>(nullptr, ArrayDeleter<char>()));
+        return UniquePtr<char, ArrayDeleter<char>>(nullptr, ArrayDeleter<char>());
     }
     
     char* buffer = new char[size];
     GENERIC_CHECK(nullptr != buffer, KERN_NO_SPACE, "Failed to allocate buffer");
     
-    return Result<UniquePtr<char, ArrayDeleter<char>>>::make(
-        UniquePtr<char, ArrayDeleter<char>>(buffer, ArrayDeleter<char>()));
+    return UniquePtr<char, ArrayDeleter<char>>(buffer, ArrayDeleter<char>());
 }
 
 } // namespace
@@ -54,7 +52,7 @@ Result<RawBuffer> RawBuffer::make() {
 
 Result<RawBuffer> RawBuffer::make(size_t size) {
     CHECK_RESULT(buffer, allocateBuffer(size), "Failed to allocate buffer");
-    return Result<RawBuffer>::make(RawBuffer(move(buffer), size));
+    return RawBuffer(move(buffer), size);
 }
 
 Result<RawBuffer> RawBuffer::copy(const RawBuffer& other) {
@@ -64,7 +62,7 @@ Result<RawBuffer> RawBuffer::copy(const RawBuffer& other) {
         memcpy(buffer.getValue(), other.get(), other.size());
     }
     
-    return Result<RawBuffer>::make(RawBuffer(move(buffer), other.size(), other.m_used));
+    return RawBuffer(move(buffer), other.size(), other.m_used);
 }
 
 Result<void> RawBuffer::resize(size_t newSize) {
@@ -79,23 +77,23 @@ Result<void> RawBuffer::resize(size_t newSize) {
     m_size = newSize;
     m_used = min(m_used, newSize);
     
-    return Result<void>::make();
+    return {};
 }
 
 Result<void> RawBuffer::resizeIfNeeded(size_t neededSize) {
     if (neededSize <= m_size) {
         if (neededSize >= m_size / 2) {
-            return Result<void>::make();
+            return {};
         }
         
         CHECK_RESULT_NO_VALUE(resize(neededSize), "Failed to resize the buffer");
         m_used = min(m_used, neededSize);
-        return Result<void>::make();
+        return {};
     }
     
     CHECK_RESULT_NO_VALUE(resize(max(neededSize, 2 * m_size)), "Failed to resize the buffer");
     
-    return Result<void>::make();
+    return {};
 }
 
 char* RawBuffer::getCharBuffer() {
@@ -136,7 +134,7 @@ Result<void> RawBuffer::append(RawBufferView&& buffer) {
     memcpy(getCharBuffer() + m_used, buffer.get(), addedSize);
     m_used += addedSize;
     
-    return Result<void>::make();
+    return {};
 }
 
 Result<void> RawBuffer::append(RawBufferView& buffer) {

@@ -26,7 +26,7 @@ Result<off_t> endOfFileOffset(const File& file) {
     while (true) {
         const Result<RawBuffer> readResult = file.read(k_fileSizeProbeChunk, offset);
         if (readResult.hasError()) {
-            return Result<off_t>::makeError(readResult.error());
+            return Error(readResult.error());
         }
 
         const size_t bytesRead = readResult.value().size();
@@ -41,7 +41,7 @@ Result<off_t> endOfFileOffset(const File& file) {
         }
     }
 
-    return Result<off_t>::make(off_t{offset});
+    return off_t{offset};
 }
 
 } // namespace
@@ -51,7 +51,7 @@ Result<FileLogger> FileLogger::make(const String& driverId, const String& path) 
 
     CHECK_RESULT(writeOffset, endOfFileOffset(file), "Failed to determine log file end offset");
 
-    return Result<FileLogger>::make(FileLogger(move(file), String(driverId), writeOffset));
+    return FileLogger(String(driverId), move(file), writeOffset);
 }
 
 FileLogger::FileLogger(String&& driverId, File&& file, off_t writeOffset)

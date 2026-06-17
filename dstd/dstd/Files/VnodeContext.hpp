@@ -8,7 +8,6 @@
 
 #include <sys/vnode.h>
 
-#include "Checkers.hpp"
 #include "Result.hpp"
 
 

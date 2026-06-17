@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+#include "Memory/Memory.hpp"
 #include "Checkers.hpp"
 #include "Result.hpp"
 #include "TypeTraites/TypeTraites.hpp"
@@ -116,7 +117,7 @@ public:
         T* elements = reinterpret_cast<T*>(buffer.getCharBuffer());
         CHECK_RESULT_NO_VALUE(constructDefaultElements(elements), "Failed to construct array elements");
 
-        return Result<Array<T, Size>>::make(Array(move(buffer)));
+        return Array(move(buffer));
     }
 
     template<typename... Args>
@@ -125,10 +126,10 @@ public:
 
         T* elements = reinterpret_cast<T*>(buffer.getCharBuffer());
         for (size_t index = 0; index < Size; ++index) {
-            new (elements + index) T(forward<Args>(args)...);
+            constructAt(elements + index, forward<Args>(args)...);
         }
 
-        return Result<Array<T, Size>>::make(Array(move(buffer)));
+        return Array(move(buffer));
     }
 
     Array(const Array&) = delete;
@@ -218,7 +219,7 @@ public:
             data()[index] = value;
         }
 
-        return Result<void>::make();
+        return {};
     }
 
     iterator begin() noexcept {
@@ -263,16 +264,16 @@ private:
     static Result<void> constructDefaultElement(T* location, true_type) {
         auto elementResult = T::make();
         if (elementResult.hasError()) {
-            return Result<void>::makeError(elementResult.error());
+            return Error(elementResult.error());
         }
 
-        new (location) T(move(elementResult.value()));
-        return Result<void>::make();
+        constructAt(location, move(elementResult.value()));
+        return {};
     }
 
     static Result<void> constructDefaultElement(T* location, false_type) {
-        new (location) T();
-        return Result<void>::make();
+        constructAt(location);
+        return {};
     }
 
     static Result<void> constructDefaultElement(T* location) {
@@ -288,7 +289,7 @@ private:
             }
         }
 
-        return Result<void>::make();
+        return {};
     }
 
     static void destroyConstructedElements(T* elements, size_t count) {

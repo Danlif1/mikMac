@@ -40,7 +40,7 @@ Result<uintptr_t> decodeAdrpPageBase(void* assemblyPointer) {
         imm |= ~((1 << 21) - 1);
     }
 
-    return Result<uintptr_t>::make((numericAddress & ~0xFFFULL) + (static_cast<int64_t>(imm) << 12));
+    return (numericAddress & ~0xFFFULL) + (static_cast<int64_t>(imm) << 12);
 }
 
 } // namespace
@@ -59,7 +59,7 @@ Result<void*> addressFromAdrp(void* assemblyPointer) {
     );
 
     const int imm12 = (ldrInstruction >> 10) & 0xFFF;
-    return Result<void*>::make(reinterpret_cast<void*>(pageBase + static_cast<uintptr_t>(imm12) * 4));
+    return reinterpret_cast<void*>(pageBase + static_cast<uintptr_t>(imm12) * 4);
 }
 
 Result<void*> addressFromAdrl(void* assemblyPointer) {
@@ -76,7 +76,7 @@ Result<void*> addressFromAdrl(void* assemblyPointer) {
     );
 
     const int imm12 = (addInstruction >> 10) & 0xFFF;
-    return Result<void*>::make(reinterpret_cast<void*>(pageBase + static_cast<uintptr_t>(imm12)));
+    return reinterpret_cast<void*>(pageBase + static_cast<uintptr_t>(imm12));
 }
 
 } // namespace dstd::unstable

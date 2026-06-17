@@ -6,11 +6,18 @@
 //
 #pragma once
 
+#include "TypeTraites/Forward.hpp"
+
 
 namespace dstd {
 
 constexpr uint64_t MIN_KERNEL_ADDRESS = 0x80000000000;
 constexpr uint64_t KERNEL_ADDRESS_MASK = 0xfffff80000000000;
+
+template<typename T, typename... Args>
+T* constructAt(T* location, Args&&... args) {
+    return new (location) T(forward<Args>(args)...);
+}
 
 } // namespace dstd
 
