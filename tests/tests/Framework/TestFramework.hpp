@@ -9,9 +9,11 @@
 #include <mach/mach_types.h>
 
 #include "Checkers.hpp"
+#include "Logger.hpp"
 #include "Result.hpp"
 #include "TypeTraites/TypeTraites.hpp"
-#include "Logger.hpp"
+#include "Files/FileLogger.hpp"
+
 
 
 namespace tests {

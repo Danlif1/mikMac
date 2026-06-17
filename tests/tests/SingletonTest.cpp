@@ -7,7 +7,6 @@
 #include "Framework/TestFramework.hpp"
 
 #include "DataStructures/Arrays/Vector.hpp"
-#include "DataStructures/ISingletonGuard.hpp"
 #include "DataStructures/Singleton.hpp"
 
 #include <sys/errno.h>
@@ -45,12 +44,11 @@ Result<void> testSingletonUnavailableBeforeInit() {
 }
 
 Result<void> testSingletonScopeSurvivesInitScope() {
-    Optional<UniquePtr<ISingletonGuard>> ownedGuard;
+    Optional<SingletonGuard> ownedGuard;
 
     {
         CHECK_RESULT(localGuard, Singleton<int>::make(42), "Singleton make failed in init scope");
-        CHECK_RESULT(adoptedGuard, Singleton<int>::adoptGuard(move(localGuard)), "Failed to adopt singleton guard");
-        ownedGuard = Optional<UniquePtr<ISingletonGuard>>(move(adoptedGuard));
+        ownedGuard = Optional<SingletonGuard>(move(localGuard));
 
         CHECK_RESULT(singletonInScope, Singleton<int>::get(), "Singleton should be available in init scope");
         TEST_ASSERT_EQ(42, *singletonInScope, "Singleton should keep value in init scope");
@@ -69,16 +67,14 @@ Result<void> testSingletonScopeSurvivesInitScope() {
 }
 
 Result<void> testSingletonGuardVector() {
-    CHECK_RESULT(guards, Vector<UniquePtr<ISingletonGuard>>::make(), "Failed to allocate singleton guard vector");
+    CHECK_RESULT(guards, Vector<SingletonGuard>::make(), "Failed to allocate singleton guard vector");
 
     {
         CHECK_RESULT(intGuard, Singleton<int>::make(7), "Failed to create int singleton");
-        CHECK_RESULT(ownedIntGuard, Singleton<int>::adoptGuard(move(intGuard)), "Failed to adopt int singleton guard");
-        CHECK_RESULT_NO_VALUE(guards.push_back(move(ownedIntGuard)), "Failed to store int singleton guard");
+        CHECK_RESULT_NO_VALUE(guards.push_back(move(intGuard)), "Failed to store int singleton guard");
 
         CHECK_RESULT(payloadGuard, Singleton<SingletonPayload>::make(11), "Failed to create payload singleton");
-        CHECK_RESULT(ownedPayloadGuard, Singleton<SingletonPayload>::adoptGuard(move(payloadGuard)), "Failed to adopt payload singleton guard");
-        CHECK_RESULT_NO_VALUE(guards.push_back(move(ownedPayloadGuard)), "Failed to store payload singleton guard");
+        CHECK_RESULT_NO_VALUE(guards.push_back(move(payloadGuard)), "Failed to store payload singleton guard");
     }
 
     TEST_ASSERT_EQ(2, guards.size(), "Singleton guard vector should hold two guards");
@@ -105,7 +101,6 @@ Result<void> testSingletonGuardVector() {
 
 Result<void> testSingletonMakeIsExclusive() {
     CHECK_RESULT(firstGuard, Singleton<int>::make(1), "First singleton make failed");
-    CHECK_RESULT(ownedGuard, Singleton<int>::adoptGuard(move(firstGuard)), "Failed to adopt singleton guard");
 
     const auto duplicateMake = Singleton<int>::make(2);
     TEST_ASSERT(duplicateMake.hasError(), "Second singleton make should fail");
