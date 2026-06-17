@@ -10,9 +10,9 @@
 #include <sys/types.h>
 #include <sys/vnode.h>
 
-#include "Checkers.hpp"
-#include "Pointers/RawBuffer.hpp"
 #include "Result.hpp"
+
+#include "Pointers/RawBuffer.hpp"
 #include "Strings/String.hpp"
 
 #include "Files/VnodeContext.hpp"

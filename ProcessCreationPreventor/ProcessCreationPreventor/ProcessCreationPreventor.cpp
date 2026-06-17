@@ -1,6 +1,6 @@
 //
-//  MyKext.c
-//  MyKext
+//  ProcessCreationPreventor.cpp
+//  ProcessCreationPreventor
 //
 //  Created by Daniel Lifshitz on 14/06/2025.
 //
@@ -9,6 +9,7 @@
 #include <mach/mach_types.h>
  
  
+#include "dstd/Checkers.hpp"
 #include "dstd/Logger.hpp"
 #include "dstd/Result.hpp"
 
@@ -24,7 +25,7 @@
 Context* g_context = nullptr;
 
 
-dstd::Result<void> startImp(kmod_info_t * kmodInfo, void * data) {
+dstd::Result<void> startImp(kmod_info_t* kmodInfo, void* data) {
     CHECK_RESULT(subString, dstd::String::make("evil"), "Failed to create sub string");
     CHECK_RESULT(executionCallback, registerExecutionPreventorExample(dstd::move(subString)), "Failed to create callback");
     g_context = new Context(dstd::move(executionCallback));

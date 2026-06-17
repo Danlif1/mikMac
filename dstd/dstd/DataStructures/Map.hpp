@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+#include "Memory/Memory.hpp"
 #include "Checkers.hpp"
 #include "Result.hpp"
 #include "TypeTraites/TypeTraites.hpp"
@@ -87,8 +88,8 @@ public:
     template<typename K, typename V>
     void construct(K&& key, V&& value) {
         reset();
-        new (keyPtr()) Key(forward<K>(key));
-        new (valuePtr()) Value(forward<V>(value));
+        constructAt(keyPtr(), forward<K>(key));
+        constructAt(valuePtr(), forward<V>(value));
         m_state = MapSlotState::Occupied;
     }
 
@@ -242,10 +243,10 @@ public:
 
         MapEntry<Key, Value>* entryBuffer = reinterpret_cast<MapEntry<Key, Value>*>(buffer.getCharBuffer());
         for (size_t index = 0; index < bucketCount; ++index) {
-            new (entryBuffer + index) MapEntry<Key, Value>();
+            constructAt(entryBuffer + index);
         }
 
-        return Result<Map<Key, Value>>::make(Map(move(buffer), 0, bucketCount));
+        return Map(move(buffer), 0, bucketCount);
     }
 
     Map(const Map&) = delete;
@@ -292,13 +293,13 @@ public:
         MapEntry<Key, Value>& entry = entries()[slotIndex];
         if (entry.isOccupied()) {
             entry.value() = forward<V>(value);
-            return Result<void>::make();
+            return {};
         }
 
         entry.construct(forward<K>(key), forward<V>(value));
         ++m_size;
 
-        return Result<void>::make();
+        return {};
     }
 
     template<typename K>
@@ -330,19 +331,19 @@ public:
     Result<void> remove(K&& key) {
         const Optional<size_t> slotIndex = findOccupiedSlot(key);
         if (!slotIndex.hasValue()) {
-            return Result<void>::makeError(KERN_NOT_FOUND);
+            return Error(KERN_NOT_FOUND);
         }
 
         entries()[slotIndex.value()].markTombstone();
         --m_size;
 
-        return Result<void>::make();
+        return {};
     }
 
     Result<void> clear() {
         destroyEntries();
         m_size = 0;
-        return Result<void>::make();
+        return {};
     }
 
     size_t size() const noexcept {
@@ -478,7 +479,7 @@ private:
     Result<void> rehash(size_t newCapacity) {
         const size_t bucketCount = normalizeCapacity(newCapacity);
         if (bucketCount <= m_capacity) {
-            return Result<void>::make();
+            return {};
         }
 
         CHECK_RESULT(newMap, (Map<Key, Value>::make(bucketCount)), "Failed to allocate rehashed map");
@@ -503,7 +504,7 @@ private:
         newMap.m_size = 0;
         newMap.m_capacity = 0;
 
-        return Result<void>::make();
+        return {};
     }
 
     void destroyEntries() {

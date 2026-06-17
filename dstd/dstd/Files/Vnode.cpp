@@ -6,6 +6,8 @@
 //
 #include "Vnode.hpp"
 
+#include "Checkers.hpp"
+
 #include <sys/uio.h>
 
 
@@ -17,10 +19,10 @@ Result<Vnode> Vnode::openWithFlags(const String& path, int fmode, mode_t cmode, 
     vnode_t vnode = nullptr;
     const errno_t error = vnode_open(path.c_str(), fmode, cmode, lookupFlags, &vnode, context.get());
     if (0 != error) {
-        return Result<Vnode>::makeError(static_cast<kern_return_t>(error));
+        return Error(static_cast<kern_return_t>(error));
     }
 
-    return Result<Vnode>::make(Vnode(vnode, move(context)));
+    return Vnode(vnode, move(context));
 }
 
 Result<Vnode> Vnode::open(const String& path, int fmode, int lookupFlags) {
@@ -93,7 +95,7 @@ Result<String> Vnode::path() const {
 
     CHECK_RESULT(shortName, String::make(longName.c_str()), "Failed to copy vnode path");
 
-    return Result<String>::make(move(shortName));
+    return move(shortName);
 }
 
 Result<RawBuffer> Vnode::read(size_t length, off_t offset) const {
@@ -117,7 +119,7 @@ Result<RawBuffer> Vnode::read(size_t length, off_t offset) const {
         vfs_context_proc(m_context.get())
     );
     if (0 != error) {
-        return Result<RawBuffer>::makeError(static_cast<kern_return_t>(error));
+        return Error(static_cast<kern_return_t>(error));
     }
 
     const size_t bytesRead = length - static_cast<size_t>(bytesRemaining);
@@ -125,7 +127,7 @@ Result<RawBuffer> Vnode::read(size_t length, off_t offset) const {
         CHECK_RESULT_NO_VALUE(buffer.resize(bytesRead), "Failed to resize read buffer");
     }
 
-    return Result<RawBuffer>::make(move(buffer));
+    return move(buffer);
 }
 
 Result<void> Vnode::write(RawBuffer&& buffer, off_t offset) {
@@ -147,12 +149,12 @@ Result<void> Vnode::write(RawBuffer&& buffer, off_t offset) {
         vfs_context_proc(m_context.get())
     );
     if (0 != error) {
-        return Result<void>::makeError(static_cast<kern_return_t>(error));
+        return Error(static_cast<kern_return_t>(error));
     }
 
     GENERIC_CHECK(0 == bytesRemaining, KERN_FAILURE, "Incomplete write");
 
-    return Result<void>::make();
+    return {};
 }
 
 void Vnode::close() {

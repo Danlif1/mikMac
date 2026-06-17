@@ -8,34 +8,29 @@
 
 #include <sys/errno.h>
 
-#include "ISingletonGuard.hpp"
 #include "Optional.hpp"
-#include "Pointers/UniquePtr.hpp"
 #include "Result.hpp"
 #include "TypeTraites/TypeTraites.hpp"
 
 
 namespace dstd {
 
-template<typename T>
-class Singleton;
-
-template<typename T>
-class SingletonGuard : public ISingletonGuard {
+class SingletonGuard {
 public:
-    ~SingletonGuard() override {
-        if (m_ownsLifetime) {
-            Singleton<T>::destroyInstance();
-        }
+    using DestroyFunction = void (*)();
+
+    explicit SingletonGuard(DestroyFunction destroyFunction)
+        : m_destroyFunction(destroyFunction)
+    {}
+
+    ~SingletonGuard() {
+        destroyIfActive();
     }
 
-    SingletonGuard(const SingletonGuard&) = delete;
-    SingletonGuard& operator=(const SingletonGuard&) = delete;
-
     SingletonGuard(SingletonGuard&& other)
-        : m_ownsLifetime(other.m_ownsLifetime)
+        : m_destroyFunction(other.m_destroyFunction)
     {
-        other.m_ownsLifetime = false;
+        other.m_destroyFunction = nullptr;
     }
 
     SingletonGuard& operator=(SingletonGuard&& other) {
@@ -43,54 +38,49 @@ public:
             return *this;
         }
 
-        if (m_ownsLifetime) {
-            Singleton<T>::destroyInstance();
-        }
-
-        m_ownsLifetime = other.m_ownsLifetime;
-        other.m_ownsLifetime = false;
+        destroyIfActive();
+        m_destroyFunction = other.m_destroyFunction;
+        other.m_destroyFunction = nullptr;
 
         return *this;
     }
 
+    SingletonGuard(const SingletonGuard&) = delete;
+    SingletonGuard& operator=(const SingletonGuard&) = delete;
+
 private:
-    explicit SingletonGuard(bool ownsLifetime)
-        : m_ownsLifetime(ownsLifetime)
-    {}
+    void destroyIfActive() {
+        if (nullptr != m_destroyFunction) {
+            m_destroyFunction();
+            m_destroyFunction = nullptr;
+        }
+    }
 
-    friend class Singleton<T>;
-
-    bool m_ownsLifetime;
+    DestroyFunction m_destroyFunction;
 };
 
 template<typename T>
 class Singleton {
 public:
     template<typename... Args>
-    static Result<SingletonGuard<T>> make(Args&&... args) {
+    static Result<SingletonGuard> make(Args&&... args) {
         Optional<T>& instance = storage();
         if (instance.hasValue()) {
-            return Result<SingletonGuard<T>>::makeError(static_cast<kern_return_t>(EEXIST));
+            return Error(static_cast<kern_return_t>(EEXIST));
         }
 
-        CHECK_RESULT_NO_VALUE(constructInstance(forward<Args>(args)...), "Failed to construct singleton instance");
+        CHECK_RESULT_NO_VALUE_NO_LOG(constructInstance(forward<Args>(args)...), "Failed to construct singleton instance");
 
-        return Result<SingletonGuard<T>>::make(SingletonGuard<T>(true));
-    }
-
-    static Result<UniquePtr<ISingletonGuard>> adoptGuard(SingletonGuard<T>&& guard) {
-        return Result<UniquePtr<ISingletonGuard>>::make(
-            UniquePtr<ISingletonGuard>(new SingletonGuard<T>(move(guard)))
-        );
+        return SingletonGuard(&destroyInstance);
     }
 
     static Result<Singleton<T>> get() {
         Optional<T>& instance = storage();
         if (!instance.hasValue()) {
-            return Result<Singleton<T>>::makeError(static_cast<kern_return_t>(ENOENT));
+            return Error(static_cast<kern_return_t>(ENOENT));
         }
 
-        return Result<Singleton<T>>::make(Singleton<T>(instance.value()));
+        return Singleton<T>(instance.value());
     }
 
     T* operator->() {
@@ -120,27 +110,18 @@ private:
 
     template<typename... Args>
     static Result<void> constructInstance(Args&&... args) {
-        return constructInstance(
-            integral_constant<bool, Makeable<T, remove_cvref_t<Args>...>::value>{},
-            forward<Args>(args)...
-        );
-    }
+        if constexpr (Makeable<T, remove_cvref_t<Args>...>) {
+            auto elementResult = T::make(forward<Args>(args)...);
+            if (elementResult.hasError()) {
+                return Error(elementResult.error());
+            }
 
-    template<typename... Args>
-    static Result<void> constructInstance(integral_constant<bool, true>, Args&&... args) {
-        auto elementResult = T::make(forward<Args>(args)...);
-        if (elementResult.hasError()) {
-            return Result<void>::makeError(elementResult.error());
+            storage() = Optional<T>(move(elementResult.value()));
+            return {};
+        } else {
+            storage() = Optional<T>(T(forward<Args>(args)...));
+            return {};
         }
-
-        storage() = Optional<T>(move(elementResult.value()));
-        return Result<void>::make();
-    }
-
-    template<typename... Args>
-    static Result<void> constructInstance(integral_constant<bool, false>, Args&&... args) {
-        storage() = Optional<T>(T(forward<Args>(args)...));
-        return Result<void>::make();
     }
 
     static Optional<T>& storage() {
@@ -151,8 +132,6 @@ private:
 
         return *instance;
     }
-
-    friend class SingletonGuard<T>;
 
     T* m_object;
 };

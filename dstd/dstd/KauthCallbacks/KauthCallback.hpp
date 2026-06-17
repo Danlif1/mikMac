@@ -37,12 +37,12 @@ public:
         auto listenerResult = UniquePtr<kauth_listener_t, KauthCallbackDeleter>::make(rawListener);
         if (listenerResult.hasError()) {
             KauthCallbackDeleter()(&rawListener);
-            return dstd::Result<void>::makeError(KERN_FAILURE);
+            return Error(KERN_FAILURE);
         }
-        
+
         result.m_listener = move(listenerResult.value());
-        
-        return Result<KauthCallback<T>>::make(move(result));
+
+        return move(result);
     }
     
     bool operator==(const KauthCallback<T>& other) const {
@@ -85,12 +85,12 @@ public:
         auto listenerResult = UniquePtr<kauth_listener_t, KauthCallbackDeleter>::make(rawListener);
         if (listenerResult.hasError()) {
             KauthCallbackDeleter()(&rawListener);
-            return dstd::Result<void>::makeError(KERN_FAILURE);
+            return Error(KERN_FAILURE);
         }
-        
+
         result.m_listener = move(listenerResult.value());
-        
-        return Result<KauthCallback<void>>::make(move(result));
+
+        return move(result);
     }
     
     bool operator==(const KauthCallback<void>& other) const {

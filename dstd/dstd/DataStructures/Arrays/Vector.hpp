@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+#include "Memory/Memory.hpp"
 #include "Checkers.hpp"
 #include "Result.hpp"
 #include "TypeTraites/TypeTraites.hpp"
@@ -112,7 +113,7 @@ public:
 
     static Result<Vector<T>> make() {
         CHECK_RESULT(buffer, RawBuffer::make(), "Failed to allocate vector buffer");
-        return Result<Vector<T>>::make(Vector(move(buffer), 0, 0));
+        return Vector(move(buffer), 0, 0);
     }
 
     static Result<Vector<T>> make(size_t capacity) {
@@ -123,7 +124,7 @@ public:
         GENERIC_CHECK(capacity <= (SIZE_MAX / sizeof(T)), KERN_NO_SPACE, "Vector capacity too large");
 
         CHECK_RESULT(buffer, RawBuffer::make(capacity * sizeof(T)), "Failed to allocate vector buffer");
-        return Result<Vector<T>>::make(Vector(move(buffer), 0, capacity));
+        return Vector(move(buffer), 0, capacity);
     }
 
     Vector(const Vector&) = delete;
@@ -248,10 +249,10 @@ public:
             CHECK_RESULT_NO_VALUE(reserve(newCapacity), "Failed to reserve vector capacity");
         }
 
-        new (data() + m_size) T(forward<Args>(args)...);
+        constructAt(data() + m_size, forward<Args>(args)...);
         ++m_size;
 
-        return Result<void>::make();
+        return {};
     }
 
     Result<void> pop_back() {
@@ -260,18 +261,18 @@ public:
         data()[m_size - 1].~T();
         --m_size;
 
-        return Result<void>::make();
+        return {};
     }
 
     Result<void> clear() {
         destroyElements(0, m_size);
         m_size = 0;
-        return Result<void>::make();
+        return {};
     }
 
     Result<void> reserve(size_t newCapacity) {
         if (newCapacity <= m_capacity) {
-            return Result<void>::make();
+            return {};
         }
 
         GENERIC_CHECK(newCapacity <= (SIZE_MAX / sizeof(T)), KERN_NO_SPACE, "Vector capacity too large");
@@ -281,25 +282,25 @@ public:
         T* oldData = data();
 
         for (size_t index = 0; index < m_size; ++index) {
-            new (newData + index) T(move(oldData[index]));
+            constructAt(newData + index, move(oldData[index]));
             oldData[index].~T();
         }
 
         m_buffer = move(newBuffer);
         m_capacity = newCapacity;
 
-        return Result<void>::make();
+        return {};
     }
 
     Result<void> resize(size_t count) {
         if (count < m_size) {
             destroyElements(count, m_size);
             m_size = count;
-            return Result<void>::make();
+            return {};
         }
 
         if (count == m_size) {
-            return Result<void>::make();
+            return {};
         }
 
         if (count > m_capacity) {
@@ -307,11 +308,11 @@ public:
         }
 
         for (size_t index = m_size; index < count; ++index) {
-            new (data() + index) T();
+            constructAt(data() + index);
         }
 
         m_size = count;
-        return Result<void>::make();
+        return {};
     }
 
 private:

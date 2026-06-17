@@ -133,16 +133,16 @@ String::String(SharedPtr<Data>&& data)
 
 Result<String> String::makeFromBuffer(RawBuffer&& buffer, size_t length) {
     CHECK_RESULT(data, makeShared<Data>(move(buffer), length), "Failed to create shared string data");
-    return Result<String>::make(String(move(data)));
+    return String(move(data));
 }
 
 Result<void> String::ensureUnique() {
     if (nullptr == m_data.getValue()) {
-        return Result<void>::makeError(KERN_FAILURE);
+        return Error(KERN_FAILURE);
     }
     
     if (m_data.useCount() <= 1) {
-        return Result<void>::make();
+        return {};
     }
     
     CHECK_RESULT(bufferCopy, RawBuffer::copy(m_data.getValue()->buffer), "Failed to copy string buffer for COW");
@@ -150,7 +150,7 @@ Result<void> String::ensureUnique() {
     CHECK_RESULT(data, makeShared<Data>(move(bufferCopy), length), "Failed to create detached string data");
     m_data = move(data);
     
-    return Result<void>::make();
+    return {};
 }
 
 const char* strstr(const char* haystack, const char* needle) {

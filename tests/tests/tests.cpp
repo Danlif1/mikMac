@@ -7,6 +7,8 @@
 #include <mach/mach_types.h>
 
 #include "Framework/TestFramework.hpp"
+
+#include "Checkers.hpp"
 #include "Result.hpp"
 
 

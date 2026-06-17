@@ -6,12 +6,13 @@
 //
 #pragma once
 
-#include <sys/systm.h>
-#include <mach/mach_types.h>
+#include "Basics.hpp"
 
 #include "Memory/Memory.hpp"
-#include "Checkers.hpp"
 #include "TypeTraites/Move.hpp"
+
+#include <sys/systm.h>
+#include <mach/mach_types.h>
 
 
 namespace dstd {
@@ -30,7 +31,7 @@ public:
             return;
         }
         
-        new (&m_object) T(other.m_object);
+        constructAt(&m_object, other.m_object);
         m_hasValue = true;
     }
     
@@ -48,7 +49,7 @@ public:
             reset();
         }
         
-        new (&m_object) T(object);
+        constructAt(&m_object, object);
         m_hasValue = true;
         
         return *this;
@@ -65,7 +66,7 @@ public:
             return *this;
         }
         
-        new (&m_object) T(other.m_object);
+        constructAt(&m_object, other.m_object);
         m_hasValue = true;
         
         return *this;
@@ -77,7 +78,7 @@ public:
             return;
         }
         
-        new (&m_object) T(dstd::move(other.m_object));
+        constructAt(&m_object, dstd::move(other.m_object));
         m_hasValue = true;
         other.reset();
     }
@@ -94,7 +95,7 @@ public:
         
         reset();
         
-        new (&m_object) T(dstd::move(object));
+        constructAt(&m_object, dstd::move(object));
         m_hasValue = true;
         
         return *this;
@@ -111,7 +112,7 @@ public:
             return *this;
         }
                 
-        new (&m_object) T(dstd::move(other.m_object));
+        constructAt(&m_object, dstd::move(other.m_object));
         m_hasValue = true;
         other.reset();
         

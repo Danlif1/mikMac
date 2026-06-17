@@ -6,10 +6,12 @@
 //
 #include "VnodeContext.hpp"
 
+#include "Checkers.hpp"
+#include "Signatures/Address.hpp"
+
 #include <mach/arm/vm_param.h>
 #include <sys/proc.h>
 
-#include "Signatures/Address.hpp"
 
 
 namespace dstd {
@@ -28,7 +30,7 @@ Result<vfs_context_t> makeKernelContext() {
         "Failed to resolve kernel vfs context"
     );
 
-    return Result<vfs_context_t>::make(static_cast<vfs_context_t>(kernelContextAddress));
+    return static_cast<vfs_context_t>(kernelContextAddress);
 }
 
 } // namespace
@@ -46,7 +48,7 @@ Result<VnodeContext> VnodeContext::make(vfs_context_t sourceContext) {
     vfs_context_t context = vfs_context_create(sourceContext);
     GENERIC_CHECK(nullptr != context, KERN_FAILURE, "Failed to create vfs context");
 
-    return Result<VnodeContext>::make(VnodeContext(context));
+    return VnodeContext(context);
 }
 
 VnodeContext::VnodeContext(vfs_context_t context)
