@@ -38,9 +38,11 @@ dstd::Result<void> runAllTests() {
     RUN_TEST("RawBuffer", testRawBuffer);
     RUN_TEST("String", testString);
     RUN_TEST("Vector", testVector);
+    RUN_TEST("Set", testSet);
     RUN_TEST("Array", testArray);
     RUN_TEST("Tuple", testTuple);
     RUN_TEST("Map", testMap);
+    RUN_TEST("Lock", testLock);
     RUN_TEST("Singleton", testSingleton);
     RUN_TEST("File", testFile);
 

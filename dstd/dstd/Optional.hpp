@@ -80,7 +80,7 @@ public:
         
         constructAt(&m_object, dstd::move(other.m_object));
         m_hasValue = true;
-        other.reset();
+        other.m_hasValue = false;
     }
     
     explicit Optional(T&& object)
@@ -114,9 +114,16 @@ public:
                 
         constructAt(&m_object, dstd::move(other.m_object));
         m_hasValue = true;
-        other.reset();
+        other.m_hasValue = false;
         
         return *this;
+    }
+
+    template<typename... Args>
+    void emplace(Args&&... args) {
+        reset();
+        constructAt(&m_object, forward<Args>(args)...);
+        m_hasValue = true;
     }
     
     ~Optional() {

@@ -13,10 +13,14 @@
 #include <sys/proc.h>
 
 
-
 namespace dstd {
 
 namespace {
+
+struct vfs_context {
+    thread_t        vc_thread;              /* pointer to Mach thread */
+    kauth_cred_t    vc_ucred;               /* per thread credential */
+};
 
 constexpr uintptr_t k_vfsContextKernelOffsetFromRele = 12;
 
@@ -29,7 +33,10 @@ Result<vfs_context_t> makeKernelContext() {
         unstable::addressFromAdrl(reinterpret_cast<void*>(vfsContextKernelFunctionAddress)),
         "Failed to resolve kernel vfs context"
     );
-
+    
+    LOG(LogLevel::LOG_DEBUG, "kernelContextAddress: %p, vfsContextKernelFunctionAddress: %p", kernelContextAddress, vfsContextKernelFunctionAddress);
+    LOG(LogLevel::LOG_DEBUG, "vfs_context_rele: %p", VM_KERNEL_STRIP_PTR(vfs_context_rele));
+    LOG(LogLevel::LOG_DEBUG, "kernelContextAddress.vc_thread: %p, kernelContextAddress.vc_ucred: %p", reinterpret_cast<vfs_context*>(kernelContextAddress)->vc_thread, reinterpret_cast<vfs_context*>(kernelContextAddress)->vc_ucred);
     return static_cast<vfs_context_t>(kernelContextAddress);
 }
 
@@ -38,14 +45,18 @@ Result<vfs_context_t> makeKernelContext() {
 Result<VnodeContext> VnodeContext::make(vfs_context_t sourceContext) {
     static vfs_context_t kernelContext = nullptr;
 
+    vfs_context_t context = nullptr;
     if (nullptr == sourceContext) {
         if (nullptr == kernelContext) {
-            CHECK_RESULT(kernelContext, makeKernelContext(), "Failed to create kernel vfs context");
-        }    
-        sourceContext = kernelContext;
+            CHECK_RESULT(tempKernelContext, makeKernelContext(), "Failed to create kernel vfs context");
+            kernelContext = tempKernelContext;
+        }
+        
+        context = kernelContext;
+    } else {
+        context = vfs_context_create(sourceContext);
     }
     
-    vfs_context_t context = vfs_context_create(sourceContext);
     GENERIC_CHECK(nullptr != context, KERN_FAILURE, "Failed to create vfs context");
 
     return VnodeContext(context);
@@ -95,7 +106,7 @@ void VnodeContext::reset() {
         return;
     }
 
-    vfs_context_rele(m_context);
+    // vfs_context_rele(m_context);
     m_context = nullptr;
 }
 

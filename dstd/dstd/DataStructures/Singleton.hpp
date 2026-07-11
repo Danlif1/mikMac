@@ -116,10 +116,10 @@ private:
                 return Error(elementResult.error());
             }
 
-            storage() = Optional<T>(move(elementResult.value()));
+            storage().emplace(move(elementResult.value()));
             return {};
         } else {
-            storage() = Optional<T>(T(forward<Args>(args)...));
+            storage().emplace(forward<Args>(args)...);
             return {};
         }
     }

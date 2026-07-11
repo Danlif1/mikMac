@@ -53,9 +53,11 @@ dstd::Result<void> testSharedPtr();
 dstd::Result<void> testRawBuffer();
 dstd::Result<void> testString();
 dstd::Result<void> testVector();
+dstd::Result<void> testSet();
 dstd::Result<void> testArray();
 dstd::Result<void> testTuple();
 dstd::Result<void> testMap();
+dstd::Result<void> testLock();
 dstd::Result<void> testSingleton();
 dstd::Result<void> testFile();
 

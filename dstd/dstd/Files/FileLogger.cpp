@@ -7,6 +7,7 @@
 #include "FileLogger.hpp"
 
 #include "Checkers.hpp"
+#include "DataStructures/Arrays/Vector.hpp"
 #include "Pointers/RawBuffer.hpp"
 
 #include <stdarg.h>
@@ -48,22 +49,36 @@ Result<off_t> endOfFileOffset(const File& file) {
 
 Result<FileLogger> FileLogger::make(const String& driverId, const String& path) {
     CHECK_RESULT(file, File::make(path), "Failed to open log file");
-
     CHECK_RESULT(writeOffset, endOfFileOffset(file), "Failed to determine log file end offset");
+    CHECK_RESULT(lock, Lock::make("dstd.fileLogger"), "Failed to create file logger lock");
+    CHECK_RESULT(unloggedMessages, Vector<String>::make(), "Failed to allocate unlogged message buffer");
+    CHECK_RESULT(
+        unloggedMessagesPtr,
+        makeUnique<Vector<String>>(move(unloggedMessages)),
+        "Failed to create unlogged message buffer");
 
-    return FileLogger(String(driverId), move(file), writeOffset);
+    return FileLogger(String(driverId), move(file), writeOffset, move(lock), move(unloggedMessagesPtr));
 }
 
-FileLogger::FileLogger(String&& driverId, File&& file, off_t writeOffset)
+FileLogger::FileLogger(
+    String&& driverId,
+    File&& file,
+    off_t writeOffset,
+    Lock&& lock,
+    UniquePtr<Vector<String>>&& unloggedMessages)
     : m_file(move(file))
     , m_driverId(move(driverId))
     , m_writeOffset(writeOffset)
+    , m_lock(move(lock))
+    , m_unloggedMessages(move(unloggedMessages))
 {}
 
 FileLogger::FileLogger(FileLogger&& other)
     : m_file(move(other.m_file))
     , m_driverId(move(other.m_driverId))
     , m_writeOffset(other.m_writeOffset)
+    , m_lock(move(other.m_lock))
+    , m_unloggedMessages(move(other.m_unloggedMessages))
 {
     other.m_writeOffset = 0;
 }
@@ -76,12 +91,91 @@ FileLogger& FileLogger::operator=(FileLogger&& other) {
     m_file = move(other.m_file);
     m_driverId = move(other.m_driverId);
     m_writeOffset = other.m_writeOffset;
+    m_lock = move(other.m_lock);
+    m_unloggedMessages = move(other.m_unloggedMessages);
     other.m_writeOffset = 0;
 
     return *this;
 }
 
 FileLogger::~FileLogger() = default;
+
+Result<RawBuffer> FileLogger::buildBufferFromLines(const Vector<String>& lines) const {
+    size_t totalLength = 0;
+    for (size_t index = 0; index < lines.size(); ++index) {
+        totalLength += lines[index].length();
+    }
+
+    if (0 == totalLength) {
+        return Error(KERN_INVALID_ARGUMENT);
+    }
+
+    CHECK_RESULT(buffer, RawBuffer::make(totalLength), "Failed to allocate log write buffer");
+
+    char* writePosition = buffer.getCharBuffer();
+    for (size_t index = 0; index < lines.size(); ++index) {
+        const size_t lineLength = lines[index].length();
+        memcpy(writePosition, lines[index].c_str(), lineLength);
+        writePosition += lineLength;
+    }
+
+    return move(buffer);
+}
+
+Result<void> FileLogger::tryWriteLines(Vector<String>& lines) {
+    if (lines.empty()) {
+        return {};
+    }
+
+    CHECK_RESULT(buffer, buildBufferFromLines(lines), "Failed to build log write buffer");
+
+    const size_t totalLength = buffer.size();
+    const Result<void> writeResult = m_file.write(move(buffer), m_writeOffset);
+    if (writeResult.hasError()) {
+        return Error(writeResult.error());
+    }
+
+    m_writeOffset += static_cast<off_t>(totalLength);
+    CHECK_RESULT_NO_VALUE(lines.clear(), "Failed to clear flushed log lines");
+
+    return {};
+}
+
+void FileLogger::enqueueUnlogged(String&& line) {
+    if (m_unloggedMessages.getValue()->size() >= k_maxUnloggedMessages) {
+        return;
+    }
+
+    (void)m_unloggedMessages.getValue()->push_back(move(line));
+}
+
+void FileLogger::flushUnlogged() {
+    m_lock.lockExclusive();
+
+    Vector<String>* unloggedMessages = m_unloggedMessages.getValue();
+    if (unloggedMessages->empty()) {
+        m_lock.unlockExclusive();
+        return;
+    }
+
+    Vector<String> linesToFlush = move(*unloggedMessages);
+    Result<Vector<String>> restoredMessagesResult = Vector<String>::make();
+    if (restoredMessagesResult.hasError()) {
+        *unloggedMessages = move(linesToFlush);
+        m_lock.unlockExclusive();
+        return;
+    }
+    *unloggedMessages = move(restoredMessagesResult.value());
+
+    const Result<void> flushResult = tryWriteLines(linesToFlush);
+    if (flushResult.hasError()) {
+        for (size_t index = 0; index < linesToFlush.size(); ++index) {
+            enqueueUnlogged(move(linesToFlush[index]));
+        }
+    }
+
+    m_lock.unlockExclusive();
+}
 
 void FileLogger::log(LogLevel level, const char* message, ...) {
     char logLine[k_logLineCapacity];
@@ -116,21 +210,51 @@ void FileLogger::log(LogLevel level, const char* message, ...) {
         return;
     }
 
-    Result<RawBuffer> bufferResult = RawBuffer::make(static_cast<size_t>(totalLength));
-    if (bufferResult.hasError()) {
+    m_lock.lockExclusive();
+
+    Result<Vector<String>> linesToWriteResult = Vector<String>::make();
+    if (linesToWriteResult.hasError()) {
+        m_lock.unlockExclusive();
+        printf("%s", logLine);
+        return;
+    }
+    Vector<String> linesToWrite = move(linesToWriteResult.value());
+
+    Vector<String>* unloggedMessages = m_unloggedMessages.getValue();
+    for (size_t index = 0; index < unloggedMessages->size(); ++index) {
+        const Result<void> appendResult = linesToWrite.push_back(String((*unloggedMessages)[index]));
+        if (appendResult.hasError()) {
+            m_lock.unlockExclusive();
+            printf("%s", logLine);
+            return;
+        }
+    }
+
+    const Result<String> currentLineResult = String::make(logLine, static_cast<size_t>(totalLength));
+    if (currentLineResult.hasError()) {
+        m_lock.unlockExclusive();
         printf("%s", logLine);
         return;
     }
 
-    memcpy(bufferResult.value().getCharBuffer(), logLine, static_cast<size_t>(totalLength));
+    const Result<void> appendCurrentResult = linesToWrite.push_back(move(currentLineResult.value()));
+    if (appendCurrentResult.hasError()) {
+        m_lock.unlockExclusive();
+        printf("%s", logLine);
+        return;
+    }
 
-    const Result<void> writeResult = m_file.write(move(bufferResult.value()), m_writeOffset);
+    const Result<void> writeResult = tryWriteLines(linesToWrite);
     if (writeResult.hasError()) {
+        enqueueUnlogged(move(linesToWrite.back()));
+        m_lock.unlockExclusive();
         printf("%s", logLine);
         return;
     }
 
-    m_writeOffset += totalLength;
+    (void)unloggedMessages->clear();
+
+    m_lock.unlockExclusive();
 }
 
 } // namespace dstd
